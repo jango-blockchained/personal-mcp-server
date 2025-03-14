@@ -1,6 +1,6 @@
 # Boilerplate MCP Server
 
-A boilerplate Model Context Protocol (MCP) server implementation using TypeScript. This project demonstrates how to build a well-structured MCP server that exposes tools to AI applications like Claude Desktop.
+A boilerplate Model Context Protocol (MCP) server implementation using TypeScript. This project demonstrates how to build a well-structured MCP server that exposes both tools and resources to AI applications like Claude Desktop.
 
 ## Prerequisites
 
@@ -49,18 +49,30 @@ The project follows a clean architecture pattern with clear separation of concer
 
 - `src/index.ts` - Main entry point for the MCP server
 - `src/controllers/` - Business logic layer that handles core functionality, transforms responses from services, and formats data
-- `src/services/` - Data access layer that interacts with external APIs and data sources
+- `src/services/` - Data access layer that interacts with external APIs and data sources (e.g., ip-api.com)
 - `src/tools/` - MCP tool definitions and parameter schemas using Zod
+- `src/resources/` - MCP resource definitions that expose data like IP address details
 - `src/utils/` - Shared utilities like logging
 - `dist/` - Compiled JavaScript output (generated after build)
 
 ### Current Implementation
 
-The server currently implements an IP address lookup tool that demonstrates the MCP architecture:
+The server currently implements IP address functionality in two ways:
 
-1. The tool definition in `src/tools/ipaddress.tool.ts` specifies the interface and parameters
-2. The controller in `src/controllers/ipaddress.controller.ts` handles the business logic
-3. The service in `src/services/vendor.ip-api.com.service.ts` fetches data from the external API
+1. **As a Tool**: `get_ip_details`
+   - Defined in `src/tools/ipaddress.tool.ts`
+   - Accepts an optional IP address parameter
+   - Returns details about the specified IP or the current device
+
+2. **As a Resource**: `Current Device IP`
+   - Defined in `src/resources/ipaddress.resource.ts`
+   - Exposes IP information as a resource at `ip://current`
+   - Provides details about the current device's IP address
+
+Both implementations follow the same data flow:
+1. The controller (`ipaddress.controller.ts`) handles the business logic
+2. The service (`vendor.ip-api.com.service.ts`) fetches data from the external API
+3. The data is formatted and returned to the client
 
 ## About MCP
 
@@ -80,6 +92,20 @@ MCP follows a client-server architecture:
 - **MCP Hosts**: AI applications like Claude Desktop that need access to external data
 - **MCP Clients**: Components within hosts that connect to servers
 - **MCP Servers**: Lightweight programs (like this one) that expose specific capabilities through the standardized protocol
+
+## Testing
+
+Run tests with:
+
+```bash
+npm test
+```
+
+Generate test coverage report:
+
+```bash
+npm run test:coverage
+```
 
 ## License
 

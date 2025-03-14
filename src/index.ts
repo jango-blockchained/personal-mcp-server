@@ -4,6 +4,7 @@ import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js'
 import { logger } from './utils/logger.util.js';
 
 import ipAddressTools from './tools/ipaddress.tool.js';
+import ipLookupResources from './resources/ipaddress.resource.js';
 
 let serverInstance: McpServer | null = null;
 let transportInstance: SSEServerTransport | StdioServerTransport | null = null;
@@ -27,6 +28,9 @@ export async function main(mode: 'stdio' | 'sse' = 'stdio') {
 
 	// register tools
 	ipAddressTools.register(serverInstance);
+
+	// register resources
+	ipLookupResources.register(serverInstance);
 
 	return serverInstance.connect(transportInstance).catch(err => {
 		logger.error(`[src/index.ts] Failed to start server`, err);
