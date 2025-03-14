@@ -43,6 +43,20 @@ To run the compiled JavaScript code:
 npm start
 ```
 
+## CI/CD with GitHub Actions
+
+This project includes a GitHub Actions workflow for continuous integration and deployment:
+
+### Continuous Integration & Deployment
+
+On every push to the `main` branch:
+- Checks code formatting with Prettier
+- Runs ESLint to ensure code quality
+- Builds the TypeScript code to verify compilation
+- Publishes the package to GitHub Packages automatically
+
+This automated workflow ensures that the latest version of your package is always available in GitHub Packages whenever changes are pushed to the main branch.
+
 ## Project Structure
 
 The project follows a clean architecture pattern with clear separation of concerns:
