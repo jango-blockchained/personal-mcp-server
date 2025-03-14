@@ -12,9 +12,10 @@ export default [
     },
     rules: {
       'no-console': 'off',
-      'prettier/prettier': 'error'
+      'prettier/prettier': 'error',
+      '@typescript-eslint/no-unused-vars': ['error', { 'argsIgnorePattern': '^_' }]
     },
     ignores: ['dist/**', 'node_modules/**'],
   },
   eslintConfigPrettier
-]; 
+];

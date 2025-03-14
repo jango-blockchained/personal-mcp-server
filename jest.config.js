@@ -13,4 +13,8 @@ export default {
       },
     ],
   },
+  coveragePathIgnorePatterns: [
+    '/node_modules/',
+    '/src/utils/logger.util.ts'
+  ],
 }; 
