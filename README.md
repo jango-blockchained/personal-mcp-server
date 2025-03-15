@@ -126,6 +126,52 @@ npx -y aashari/boilerplate-mcp-server
 
 This will start the MCP server in STDIO mode, ready to communicate with AI clients like Claude Desktop.
 
+## Setting Up with Claude Desktop
+
+To use this MCP server with Claude Desktop:
+
+1. **Open Claude Desktop Settings**:
+   - Launch Claude Desktop
+   - Click on the settings icon (gear) in the top-right corner
+   
+   ![Claude Desktop Settings](public/claude-setup-01.png)
+
+2. **Edit MCP Configuration**:
+   - Click on "Edit Config" button
+   - This will open File Explorer/Finder with the `claude_desktop_config.json` file
+
+3. **Update Configuration File**:
+   - Add the following configuration to the file:
+   ```json
+   {
+     "mcpServers": {
+       "aashari/boilerplate-mcp-server": {
+         "command": "npx",
+         "args": ["-y", "aashari/boilerplate-mcp-server"]
+       }
+     }
+   }
+   ```
+   - Save the file
+
+4. **Restart Claude Desktop**:
+   - Close and reopen Claude Desktop to apply the changes
+   
+   ![Claude Desktop Home](public/claude-setup-02.png)
+
+5. **Verify Tool Availability**:
+   - On the Claude home page, look for the hammer icon on the right side
+   - Click it to see available tools
+   - Ensure the `get-ip-details` tool is listed
+   
+   ![Claude Tools Menu](public/claude-setup-03.png)
+
+6. **Test the Tool**:
+   - Try asking Claude: "give me my public IP" or "analyze this IP: 8.8.8.8"
+   - Claude will use the MCP tool to fetch and display the requested information
+   
+   ![Claude Using IP Tool](public/claude-setup-04.png)
+
 ## Creating Your Own MCP Server
 
 This boilerplate is designed to be easily customized for your own MCP server. Here's how to get started:
