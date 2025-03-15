@@ -57,21 +57,74 @@ The package can also be used as a command-line tool for human interaction:
   ```bash
   npx -y aashari/boilerplate-mcp-server --help
   ```
+  
+  Example output:
+  ```
+  Usage: @aashari/boilerplate-mcp-server [options] [command]
+
+  A boilerplate Model Context Protocol (MCP) server implementation using TypeScript
+
+  Options:
+    -V, --version               output the version number
+    -h, --help                  display help for command
+
+  Commands:
+    get-ip-details [ipAddress]  Get details about a specific IP address or the current device
+    help [command]              display help for command
+  ```
 
 - **Get current device IP details**:
   ```bash
   npx -y aashari/boilerplate-mcp-server get-ip-details
+  ```
+  
+  Example output:
+  ```
+  status: success
+  country: Indonesia
+  countryCode: ID
+  region: JK
+  regionName: Jakarta
+  city: Jakarta
+  zip: 11730
+  lat: -6.2114
+  lon: 106.8446
+  timezone: Asia/Jakarta
+  isp: Biznet Wifi
+  org: 
+  as: AS17451 BIZNET NETWORKS
+  query: 118.99.106.135
   ```
 
 - **Get details for a specific IP address**:
   ```bash
   npx -y aashari/boilerplate-mcp-server get-ip-details 8.8.8.8
   ```
+  
+  Example output:
+  ```
+  status: success
+  country: United States
+  countryCode: US
+  region: VA
+  regionName: Virginia
+  city: Ashburn
+  zip: 20149
+  lat: 39.03
+  lon: -77.5
+  timezone: America/New_York
+  isp: Google LLC
+  org: Google Public DNS
+  as: AS15169 Google LLC
+  query: 8.8.8.8
+  ```
 
 When run without arguments, the package starts the MCP Server for AI clients:
 ```bash
 npx -y aashari/boilerplate-mcp-server
 ```
+
+This will start the MCP server in STDIO mode, ready to communicate with AI clients like Claude Desktop.
 
 ## Creating Your Own MCP Server
 
