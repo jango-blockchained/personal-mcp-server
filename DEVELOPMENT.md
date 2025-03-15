@@ -159,7 +159,7 @@ async function getWeatherInfo(args: WeatherToolArgsType, _extra: RequestHandlerE
 function register(server: McpServer) {
   logger.debug(`[src/tools/weather.tool.ts@register] Registering tools...`);
   server.tool(
-    'get_weather_info',
+    'get-weather-info',
     'Get weather information for a specific location',
     WeatherToolArgs.shape,
     getWeatherInfo,
@@ -227,19 +227,19 @@ function register(program: Command) {
   logger.debug(`[src/cli/weather.cli.ts@register] Registering weather CLI commands...`);
   
   program
-    .command('get_weather_info')
+    .command('get-weather-info')
     .description('Get weather information for a specific location')
     .argument('<location>', 'Location to get weather for')
     .action(async (location: string) => {
       try {
         logger.info(
-          `[src/cli/weather.cli.ts@get_weather_info] Fetching weather for ${location}...`,
+          `[src/cli/weather.cli.ts@get-weather-info] Fetching weather for ${location}...`,
         );
         const result = await weatherController.get(location);
         console.log(result.content);
       } catch (error) {
         logger.error(
-          '[src/cli/weather.cli.ts@get_weather_info] Failed to get weather',
+          '[src/cli/weather.cli.ts@get-weather-info] Failed to get weather',
           error,
         );
         process.exit(1);
@@ -250,123 +250,8 @@ function register(program: Command) {
 export default { register };
 ```
 
-### 8. Update Main Entry Point
-
-Modify `src/index.ts` to register your tool and resource:
-
-```typescript
-// src/index.ts (partial)
-import weatherTools from './tools/weather.tool.js';
-import weatherResources from './resources/weather.resource.js';
-
-export async function startServer(mode: 'stdio' | 'sse' = 'stdio') {
-  // ... existing code ...
-
-  // register tools
-  ipAddressTools.register(serverInstance);
-  weatherTools.register(serverInstance);  // Add this line
-
-  // register resources
-  ipLookupResources.register(serverInstance);
-  weatherResources.register(serverInstance);  // Add this line
-
-  // ... existing code ...
-}
-```
-
-### 9. Update CLI Entry Point
-
-Modify `src/cli/index.ts` to register your CLI command:
-
-```typescript
-// src/cli/index.ts (partial)
-import ipAddressCli from './ipaddress.cli.js';
-import weatherCli from './weather.cli.js';  // Add this line
-
-export async function runCli(args: string[]) {
-  // ... existing code ...
-
-  // Register CLI commands
-  ipAddressCli.register(program);
-  weatherCli.register(program);  // Add this line
-
-  // ... existing code ...
-}
-```
-
-### 10. Create Tests
-
-Create test files for your controller and service:
-
-```typescript
-// src/controllers/weather.test.ts
-import weatherController from './weather.controller';
-import weatherService from '../services/weather.service';
-
-// Mock the weather service
-jest.mock('../services/weather.service', () => ({
-  get: jest.fn(),
-}));
-
-describe('Weather Controller', () => {
-  beforeEach(() => {
-    jest.clearAllMocks();
-  });
-
-  it('should format weather data correctly', async () => {
-    // Mock the service response
-    const mockWeatherData = {
-      location: 'Test City',
-      temperature: 25,
-      conditions: 'Cloudy',
-      humidity: 70,
-      windSpeed: 15,
-      timestamp: '2023-01-01T12:00:00Z',
-    };
-    (weatherService.get as jest.Mock).mockResolvedValue(mockWeatherData);
-
-    // Call the controller
-    const result = await weatherController.get('Test City');
-
-    // Verify the service was called
-    expect(weatherService.get).toHaveBeenCalledWith('Test City');
-
-    // Verify the result
-    expect(result.content).toContain('Location: Test City');
-    expect(result.content).toContain('Temperature: 25°C');
-    expect(result.content).toContain('Conditions: Cloudy');
-  });
-});
-```
-
 ## Testing Your Implementation
 
 - Test the MCP server with the MCP Inspector: `npm run inspector`
-- Test the CLI: `npm run build && node dist/index.cjs get_weather_info "New York"`
+- Test the CLI: `npm run build && node dist/index.cjs get-weather-info "New York"`
 - Run your tests: `npm test`
-
-## Version Management
-
-Update the project version across `package.json`, `src/index.ts`, and CLI constants:
-
-```bash
-npm run update-version <new-version>
-```
-
-Example: `npm run update-version 1.2.0`. This script ensures version consistency, validated against SemVer format (e.g., `x.y.z`, `x.y.z-beta`).
-
-## CI/CD with GitHub Actions
-
-A GitHub Actions workflow (`.github/workflows/ci-cd.yml`) automates continuous integration and deployment:
-
-1. **Continuous Integration**:
-   - Runs on every push to the `main` branch
-   - Checks code formatting with Prettier
-   - Lints code with ESLint
-   - Builds the project
-   - Runs tests
-
-2. **Continuous Deployment**:
-   - Automatically publishes to GitHub Packages when version changes
-   - Creates GitHub releases with appropriate tags
-   - Generates release notes based on commit history 
