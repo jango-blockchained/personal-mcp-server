@@ -1,142 +1,178 @@
 # Boilerplate MCP Server
 
-A boilerplate Model Context Protocol (MCP) server implementation using TypeScript. This project demonstrates how to build a well-structured MCP server that exposes both tools and resources to AI applications like Claude Desktop.
+A boilerplate Model Context Protocol (MCP) server implementation using TypeScript. This project demonstrates how to build a well-structured MCP server that exposes both tools and resources to AI applications like Claude Desktop. It serves as a starting point for developers building MCP-compatible servers with a focus on clean architecture, automated workflows, and easy deployment.
 
 ## Prerequisites
 
-- Node.js v22.14.0 or higher
-- npm (comes with Node.js)
+- **Node.js**: v22.14.0 or higher (specified in `.node-version` and `package.json`).
+- **npm**: Comes with Node.js, used for package management.
 
 ## Installation
+
+Install dependencies locally:
 
 ```bash
 npm install
 ```
 
+This sets up the project with `@modelcontextprotocol/sdk` and development tools like `tsup`, `jest`, and `eslint`.
+
 ## Development
 
-To run the server in development mode with hot reloading:
+Run the server in development mode with hot reloading using `ts-node`:
 
 ```bash
 npm run dev
 ```
 
-To test the server with the MCP Inspector (a debugging tool for MCP servers):
+Test the server with the MCP Inspector (a debugging tool for MCP servers):
 
 ```bash
 npm run inspector
 ```
 
+Both commands use the `stdio` transport by default, as defined in `src/index.ts`.
+
 ## Building
 
-To compile the TypeScript code to JavaScript using tsup:
+Compile the TypeScript code to JavaScript using `tsup`:
 
 ```bash
 npm run build
 ```
 
-## Running
+This generates `dist/index.cjs` (executable CommonJS bundle) and `dist/index.d.cts` (TypeScript declarations). The `prebuild` script (`rimraf dist`) ensures a clean `dist/` folder before each build.
 
-To run the compiled JavaScript code:
+## Running Locally
+
+Run the compiled JavaScript code:
 
 ```bash
 npm start
 ```
 
+This executes `node dist/index.cjs`, starting the MCP server with `stdio` transport.
+
 ## Running with npx
 
-You can run this MCP server without installing it locally:
+Run the server without local installation:
 
-- From GitHub Packages (after publishing):
+- **From GitHub Packages** (after publishing via CI/CD):
   ```bash
   npx -y @aashari/boilerplate-mcp-server
   ```
-
-- Directly from GitHub repository:
+- **Directly from GitHub Repository**:
   ```bash
   npx -y aashari/boilerplate-mcp-server
   ```
 
-This will fetch the package, build it, and run it in one command.
+Both commands fetch the package, run `npm run build` (via `prepare` script), and execute the `mcp-server` command defined in `package.json`’s `bin` field. The `-y` flag skips prompts for a seamless experience.
+
+## Version Management
+
+Update the project version across `package.json` and `src/index.ts`:
+
+```bash
+npm run update-version <new-version>
+```
+
+Example: `npm run update-version 1.2.0`. This script ensures version consistency, validated against SemVer format (e.g., `x.y.z`, `x.y.z-beta`).
 
 ## CI/CD with GitHub Actions
 
-This project includes a GitHub Actions workflow for continuous integration and deployment:
+A GitHub Actions workflow (`.github/workflows/ci-cd.yml`) automates continuous integration and deployment:
 
-### Continuous Integration & Deployment
+### Continuous Integration
 
 On every push to the `main` branch:
-- Checks code formatting with Prettier
-- Runs ESLint to ensure code quality
-- Builds the TypeScript code to verify compilation
-- Publishes the package to GitHub Packages automatically
 
-This automated workflow ensures that the latest version of your package is always available in GitHub Packages whenever changes are pushed to the main branch.
+- Checks code formatting with `prettier --check`.
+- Lints code with `eslint`.
+- Builds with `tsup` to verify compilation.
+- Runs unit tests with `jest`.
+
+### Continuous Deployment
+
+- Detects version changes in `package.json`.
+- If changed:
+  - Publishes to GitHub Packages (`@aashari/boilerplate-mcp-server`).
+  - Creates and pushes a Git tag (e.g., `v1.2.0`).
+
+This ensures the latest version is available on GitHub Packages, tagged in the repository, and ready for `npx -y` usage.
 
 ## Project Structure
 
 The project follows a clean architecture pattern with clear separation of concerns:
 
-- `src/index.ts` - Main entry point for the MCP server
-- `src/controllers/` - Business logic layer that handles core functionality, transforms responses from services, and formats data
-- `src/services/` - Data access layer that interacts with external APIs and data sources (e.g., ip-api.com)
-- `src/tools/` - MCP tool definitions and parameter schemas using Zod
-- `src/resources/` - MCP resource definitions that expose data like IP address details
-- `src/utils/` - Shared utilities like logging
-- `dist/` - Compiled JavaScript output (generated after build)
+- **`src/index.ts`**: Main entry point, initializes the MCP server.
+- **`src/controllers/`**: Business logic (e.g., `ipaddress.controller.ts`).
+- **`src/services/`**: External API integration (e.g., `vendor.ip-api.com.service.ts`).
+- **`src/tools/`**: MCP tool definitions with Zod schemas (e.g., `ipaddress.tool.ts`).
+- **`src/resources/`**: MCP resource definitions (e.g., `ipaddress.resource.ts`).
+- **`src/utils/`**: Shared utilities (e.g., `logger.util.ts`).
+- **`scripts/`**: Utility scripts (e.g., `update-version.js`).
+- **`dist/`**: Compiled output (generated by `tsup`).
 
 ### Current Implementation
 
-The server currently implements IP address functionality in two ways:
+The server provides IP address functionality in two ways:
 
-1. **As a Tool**: `get_ip_details`
-   - Defined in `src/tools/ipaddress.tool.ts`
-   - Accepts an optional IP address parameter
-   - Returns details about the specified IP or the current device
+1. **Tool: `get_ip_details`**:
 
-2. **As a Resource**: `Current Device IP`
-   - Defined in `src/resources/ipaddress.resource.ts`
-   - Exposes IP information as a resource at `ip://current`
-   - Provides details about the current device's IP address
+   - **Location**: `src/tools/ipaddress.tool.ts`
+   - **Parameters**: Optional `ipAddress` (string).
+   - **Functionality**: Returns IP details for a specified IP or the current device if none provided.
+   - **Usage**: Callable by MCP clients.
 
-Both implementations follow the same data flow:
-1. The controller (`ipaddress.controller.ts`) handles the business logic
-2. The service (`vendor.ip-api.com.service.ts`) fetches data from the external API
-3. The data is formatted and returned to the client
+2. **Resource: `Current Device IP`**:
+   - **Location**: `src/resources/ipaddress.resource.ts`
+   - **URI**: `ip://current`
+   - **Functionality**: Exposes current device IP details as a text/plain resource.
+   - **Usage**: Accessible as context by MCP hosts.
+
+**Data Flow**:
+
+1. `ipaddress.controller.ts` orchestrates the logic.
+2. `vendor.ip-api.com.service.ts` fetches data from `http://ip-api.com/json`.
+3. Results are formatted and returned to the client.
 
 ## About MCP
 
-The Model Context Protocol (MCP) is a standardized protocol developed by Anthropic for connecting AI applications (clients) with tools, resources, and data (servers). It enables seamless interoperability between LLM hosts and external systems, fostering a local-first, extensible AI ecosystem.
+The Model Context Protocol (MCP), developed by Anthropic, connects AI applications (clients) with tools, resources, and data (servers). It fosters a local-first, extensible AI ecosystem by enabling seamless interoperability with LLM hosts.
 
 ### Key Features
 
-- **Resources**: Expose data (e.g., files, database records) for clients to use as context
-- **Tools**: Executable functions that clients can call (e.g., querying a database, fetching weather data)
-- **Prompts**: Reusable templates for guiding LLM interactions
-- **Transport**: Supports STDIO (local process communication) and HTTP/SSE (remote communication)
+- **Resources**: Expose data (e.g., files, IP details) for client context.
+- **Tools**: Executable functions (e.g., IP lookup) for client invocation.
+- **Prompts**: Reusable templates for LLM interactions (not implemented here).
+- **Transport**: Supports STDIO (used here) and HTTP/SSE (planned).
 
 ### Architecture
 
-MCP follows a client-server architecture:
-
-- **MCP Hosts**: AI applications like Claude Desktop that need access to external data
-- **MCP Clients**: Components within hosts that connect to servers
-- **MCP Servers**: Lightweight programs (like this one) that expose specific capabilities through the standardized protocol
+- **MCP Hosts**: AI apps (e.g., Claude Desktop) needing external data.
+- **MCP Clients**: Components within hosts connecting to servers.
+- **MCP Servers**: Lightweight programs (like this) exposing capabilities via MCP.
 
 ## Testing
 
-Run tests with:
+Run unit tests:
 
 ```bash
 npm test
 ```
 
-Generate test coverage report:
+Generate a test coverage report:
 
 ```bash
 npm run test:coverage
 ```
 
+Tests in `src/**/*.test.ts` verify controller and service functionality using Jest.
+
+## Contributing
+
+Contributions are welcome! Fork the repository, make changes, and submit a pull request to `main`. Ensure tests pass and formatting/linting standards are met.
+
 ## License
 
-ISC 
+[ISC](https://opensource.org/licenses/ISC)
