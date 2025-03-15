@@ -172,20 +172,7 @@ The server provides IP address functionality in three ways:
 
 ## About MCP
 
-The Model Context Protocol (MCP), developed by Anthropic, connects AI applications (clients) with tools, resources, and data (servers). It fosters a local-first, extensible AI ecosystem by enabling seamless interoperability with LLM hosts.
-
-### Key Features
-
-- **Resources**: Expose data (e.g., files, IP details) for client context.
-- **Tools**: Executable functions (e.g., IP lookup) for client invocation.
-- **Prompts**: Reusable templates for LLM interactions (not implemented here).
-- **Transport**: Supports STDIO (used here) and HTTP/SSE (planned).
-
-### Architecture
-
-- **MCP Hosts**: AI apps (e.g., Claude Desktop) needing external data.
-- **MCP Clients**: Components within hosts connecting to servers.
-- **MCP Servers**: Lightweight programs (like this) exposing capabilities via MCP.
+For detailed information about the Model Context Protocol (MCP), including core concepts, architecture, and implementation guides, please refer to the [official MCP documentation](https://modelcontextprotocol.io/docs/).
 
 ## Testing
 
