@@ -194,16 +194,8 @@ jobs:
           # Add commits to release notes
           cat $NOTES_FILE.commits >> $NOTES_FILE
           
-          # Add information about the package
-          echo "" >> $NOTES_FILE
-          echo "## Installation" >> $NOTES_FILE
-          echo "" >> $NOTES_FILE
-          echo "```bash" >> $NOTES_FILE
-          echo "npx -y aashari/boilerplate-mcp-server" >> $NOTES_FILE
-          echo "```" >> $NOTES_FILE
-          echo "" >> $NOTES_FILE
-          
           # Add assets section
+          echo "" >> $NOTES_FILE
           echo "## Assets" >> $NOTES_FILE
           echo "" >> $NOTES_FILE
           echo "- **index.cjs**: Main executable file (CommonJS format)" >> $NOTES_FILE
