@@ -2,6 +2,12 @@
 
 A boilerplate Model Context Protocol (MCP) server implementation using TypeScript. This project demonstrates how to build a well-structured MCP server that exposes both tools and resources to AI applications like Claude Desktop. It serves as a starting point for developers building MCP-compatible servers with a focus on clean architecture, automated workflows, and easy deployment.
 
+## Core Features
+
+- **STDIO MCP Server**: Designed for AI clients like Claude Desktop, providing tools and resources via the Model Context Protocol.
+- **CLI Support**: Human-friendly command-line interface for the same functionality, making it easy to test and use directly.
+- **Automated Release Management**: GitHub Actions workflow for continuous integration, testing, and publishing to GitHub Packages.
+
 ## Prerequisites
 
 - **Node.js**: v22.14.0 or higher (specified in `.node-version` and `package.json`).
@@ -92,9 +98,191 @@ When run without arguments, the package starts the MCP Server for AI clients:
 npx -y @aashari/boilerplate-mcp-server
 ```
 
+## Creating Your Own MCP Server
+
+This boilerplate is designed to be easily customized for your own MCP server. Here's how to get started:
+
+### 1. Fork the Repository
+
+Start by forking this repository to your own GitHub account.
+
+### 2. Customize the Package Information
+
+Update the package information in `package.json`:
+- Change the `name` to your package name (e.g., `@yourusername/your-mcp-server`)
+- Update the `description`, `repository`, `author`, and other fields
+- Run `npm run update-version 1.0.0` to ensure all version references are updated
+
+### 3. Implement Your Own Functionality
+
+The boilerplate includes IP address lookup functionality as an example. To add your own functionality:
+
+1. **Create a Service**: 
+   - Create a new file in `src/services/` (e.g., `weather.service.ts`)
+   - Implement API calls or data processing logic
+   - Example for a weather service:
+   ```typescript
+   // src/services/weather.service.ts
+   import { logger } from '../utils/logger.util.js';
+
+   interface WeatherData {
+     location: string;
+     temperature: number;
+     conditions: string;
+     // Add more fields as needed
+   }
+
+   async function get(location: string): Promise<WeatherData> {
+     logger.debug(`[src/services/weather.service.ts@get] Getting weather for ${location}...`);
+     // Call a weather API here
+     // For example: const response = await fetch(`https://api.weather.com/v1/${encodeURIComponent(location)}`);
+     
+     // Mock data for demonstration
+     return {
+       location,
+       temperature: 22,
+       conditions: 'Sunny',
+     };
+   }
+
+   export default { get };
+   ```
+
+2. **Create a Controller**:
+   - Create a new file in `src/controllers/` (e.g., `weather.controller.ts`)
+   - Implement business logic that uses your service
+   - Example:
+   ```typescript
+   // src/controllers/weather.controller.ts
+   import weatherService from '../services/weather.service.js';
+   import { logger } from '../utils/logger.util.js';
+
+   async function get(location: string) {
+     logger.debug(`[src/controllers/weather.controller.ts@get] Getting weather for ${location}...`);
+     const weatherData = await weatherService.get(location);
+     logger.debug(
+       `[src/controllers/weather.controller.ts@get] Got the response from the service`,
+       weatherData,
+     );
+     
+     return {
+       content: `Weather for ${weatherData.location}: ${weatherData.temperature}°C, ${weatherData.conditions}`,
+     };
+   }
+
+   export default { get };
+   ```
+
+3. **Create a Tool**:
+   - Create type definitions in `src/tools/weather.type.ts`
+   - Implement the tool in `src/tools/weather.tool.ts`
+   - Example:
+   ```typescript
+   // src/tools/weather.type.ts
+   import { z } from 'zod';
+
+   const WeatherToolArgs = z.object({
+     location: z.string(),
+   });
+
+   type WeatherToolArgsType = z.infer<typeof WeatherToolArgs>;
+
+   export { WeatherToolArgs, type WeatherToolArgsType };
+   ```
+
+   ```typescript
+   // src/tools/weather.tool.ts
+   import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
+   import { logger } from '../utils/logger.util.js';
+   import { RequestHandlerExtra } from '@modelcontextprotocol/sdk/shared/protocol.js';
+   import { WeatherToolArgs, WeatherToolArgsType } from './weather.type.js';
+
+   import weatherController from '../controllers/weather.controller.js';
+
+   async function getWeatherInfo(args: WeatherToolArgsType, _extra: RequestHandlerExtra) {
+     logger.debug(`[src/tools/weather.tool.ts@getWeatherInfo] Getting weather for ${args.location}...`);
+     const message = await weatherController.get(args.location);
+     logger.debug(
+       `[src/tools/weather.tool.ts@getWeatherInfo] Got the response from the controller`,
+       message,
+     );
+     return {
+       content: [
+         {
+           type: 'text' as const,
+           text: message.content,
+         },
+       ],
+     };
+   }
+
+   function register(server: McpServer) {
+     logger.debug(`[src/tools/weather.tool.ts@register] Registering tools...`);
+     server.tool(
+       'get_weather_info',
+       'Get weather information for a specific location',
+       WeatherToolArgs.shape,
+       getWeatherInfo,
+     );
+   }
+
+   export default { register };
+   ```
+
+4. **Create a CLI Command** (optional):
+   - Create a new file in `src/cli/weather.cli.ts`
+   - Example:
+   ```typescript
+   // src/cli/weather.cli.ts
+   import { Command } from 'commander';
+   import { logger } from '../utils/logger.util.js';
+   import weatherController from '../controllers/weather.controller.js';
+
+   function register(program: Command) {
+     logger.debug(`[src/cli/weather.cli.ts@register] Registering weather CLI commands...`);
+     
+     program
+       .command('get_weather_info')
+       .description('Get weather information for a specific location')
+       .argument('<location>', 'Location to get weather for')
+       .action(async (location: string) => {
+         try {
+           logger.info(
+             `[src/cli/weather.cli.ts@get_weather_info] Fetching weather for ${location}...`,
+           );
+           const result = await weatherController.get(location);
+           console.log(result.content);
+         } catch (error) {
+           logger.error(
+             '[src/cli/weather.cli.ts@get_weather_info] Failed to get weather',
+             error,
+           );
+           process.exit(1);
+         }
+       });
+   }
+
+   export default { register };
+   ```
+
+5. **Register Your Components**:
+   - Update `src/index.ts` to register your tool
+   - Update `src/cli/index.ts` to register your CLI command
+
+### 4. Test Your Implementation
+
+- Test the MCP server with the MCP Inspector: `npm run inspector`
+- Test the CLI: `npm run build && node dist/index.cjs get_weather_info "New York"`
+- Write unit tests in `src/controllers/weather.test.ts` and `src/services/weather.test.ts`
+
+### 5. Deploy and Publish
+
+- Push your changes to GitHub
+- The CI/CD workflow will automatically build, test, and publish your package when you update the version
+
 ## Version Management
 
-Update the project version across `package.json` and `src/index.ts`:
+Update the project version across `package.json`, `src/index.ts`, and CLI constants:
 
 ```bash
 npm run update-version <new-version>
