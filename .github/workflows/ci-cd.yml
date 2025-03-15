@@ -172,20 +172,27 @@ jobs:
           # Add header
           echo "# Release v$CURRENT_VERSION" > $NOTES_FILE
           echo "" >> $NOTES_FILE
-          echo "## Changes since v$PREVIOUS_VERSION" >> $NOTES_FILE
-          echo "" >> $NOTES_FILE
           
-          # Get commit history between versions
-          if [ "$PREVIOUS_VERSION" = "0.0.0" ]; then
-            # If no previous version, get all commits
-            git log --pretty=format:"- %s (%h)" > $NOTES_FILE.commits
-          else
-            # Get commits between tags, or from the previous tag to HEAD if the current tag doesn't exist yet
+          # Check if previous version tag exists
+          if git rev-parse "v$PREVIOUS_VERSION" >/dev/null 2>&1; then
+            echo "## Changes since v$PREVIOUS_VERSION" >> $NOTES_FILE
+            echo "" >> $NOTES_FILE
+            
+            # Get commits between versions or from previous tag to HEAD
             if git rev-parse "v$CURRENT_VERSION" >/dev/null 2>&1; then
               git log --pretty=format:"- %s (%h)" "v$PREVIOUS_VERSION"..."v$CURRENT_VERSION" > $NOTES_FILE.commits
             else
               git log --pretty=format:"- %s (%h)" "v$PREVIOUS_VERSION"...HEAD > $NOTES_FILE.commits
             fi
+          else
+            echo "## Changes in this release" >> $NOTES_FILE
+            echo "" >> $NOTES_FILE
+            
+            # If no previous version tag, get recent commits (last 10)
+            git log -n 10 --pretty=format:"- %s (%h)" > $NOTES_FILE.commits
+            
+            echo "" >> $NOTES_FILE
+            echo "Note: This shows the 10 most recent commits as no previous version tag was found." >> $NOTES_FILE
           fi
           
           # Add commits to release notes
