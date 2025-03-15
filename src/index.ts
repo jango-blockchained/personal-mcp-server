@@ -3,6 +3,7 @@ import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { SSEServerTransport } from '@modelcontextprotocol/sdk/server/sse.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import { logger } from './utils/logger.util.js';
+import { config } from './utils/config.util.js';
 
 import ipAddressTools from './tools/ipaddress.tool.js';
 import ipLookupResources from './resources/ipaddress.resource.js';
@@ -12,9 +13,24 @@ let serverInstance: McpServer | null = null;
 let transportInstance: SSEServerTransport | StdioServerTransport | null = null;
 
 export async function startServer(mode: 'stdio' | 'sse' = 'stdio') {
+	// Load configuration
+	config.load();
+
+	// Enable debug logging if DEBUG is set to true
+	if (config.getBoolean('DEBUG')) {
+		logger.debug('[src/index.ts] Debug mode enabled');
+	}
+
+	// Log the DEBUG value to verify configuration loading
+	logger.info(`[src/index.ts] DEBUG value: ${process.env.DEBUG}`);
+	logger.info(
+		`[src/index.ts] IPAPI_API_TOKEN value exists: ${Boolean(process.env.IPAPI_API_TOKEN)}`,
+	);
+	logger.info(`[src/index.ts] Config DEBUG value: ${config.get('DEBUG')}`);
+
 	serverInstance = new McpServer({
 		name: '@aashari/boilerplate-mcp-server',
-		version: '1.2.4',
+		version: '1.3.0',
 	});
 
 	if (mode === 'stdio') {
@@ -42,6 +58,16 @@ export async function startServer(mode: 'stdio' | 'sse' = 'stdio') {
 
 // Main entry point
 async function main() {
+	// Load configuration
+	config.load();
+
+	// Log the DEBUG value to verify configuration loading
+	logger.info(`[src/index.ts] DEBUG value: ${process.env.DEBUG}`);
+	logger.info(
+		`[src/index.ts] IPAPI_API_TOKEN value exists: ${Boolean(process.env.IPAPI_API_TOKEN)}`,
+	);
+	logger.info(`[src/index.ts] Config DEBUG value: ${config.get('DEBUG')}`);
+
 	// Check if arguments are provided (CLI mode)
 	if (process.argv.length > 2) {
 		// CLI mode: Pass arguments to CLI runner

@@ -129,6 +129,18 @@ To use this MCP server with Claude Desktop:
    ```
    - Save the file
 
+   To pass configuration options to the server, you can modify the args array:
+   ```json
+   {
+     "mcpServers": {
+       "aashari/boilerplate-mcp-server": {
+         "command": "npx",
+         "args": ["-y", "DEBUG=true", "IPAPI_API_TOKEN=your_token", "aashari/boilerplate-mcp-server"]
+       }
+     }
+   }
+   ```
+
 4. **Restart Claude Desktop**:
    - Close and reopen Claude Desktop to apply the changes
    
@@ -170,7 +182,10 @@ To use this MCP server with Cursor AI:
    - **Type**: Select `command` from the dropdown
    - **Command**: Enter `npx -y aashari/boilerplate-mcp-server`
    
-   ![Cursor MCP Server Configuration](public/cursor-setup-03.png)
+   To pass configuration options, you can modify the command:
+   ```
+   DEBUG=true IPAPI_API_TOKEN=your_token npx -y aashari/boilerplate-mcp-server
+   ```
    
    - Click "Add"
 
@@ -211,6 +226,45 @@ npm start
 ```
 
 This executes `node dist/index.cjs`, starting the MCP server with `stdio` transport.
+
+## Configuration
+
+The server supports multiple configuration methods with the following priority order (highest to lowest):
+
+1. **Direct Environment Variables**: Set environment variables directly when running the command.
+   ```bash
+   DEBUG=true IPAPI_API_TOKEN=your_token npx -y aashari/boilerplate-mcp-server
+   ```
+
+2. **.env File**: Create a `.env` file in the project root directory.
+   ```
+   DEBUG=true
+   IPAPI_API_TOKEN=your_token
+   ```
+
+3. **Global Configuration File**: Create a global configuration file at `$HOME/.mcp/configs.json`.
+   ```json
+   {
+     "@aashari/boilerplate-mcp-server": {
+       "environments": {
+         "DEBUG": "true",
+         "IPAPI_API_TOKEN": "your_token"
+       }
+     }
+   }
+   ```
+
+### Available Configuration Options
+
+- **DEBUG**: Set to `true` to enable debug logging.
+- **IPAPI_API_TOKEN**: API token for the IP API service (if required).
+
+### Configuration Priority
+
+The configuration system follows a cascading priority where values from higher priority sources override lower priority ones. This allows you to:
+- Use global configuration for shared settings across projects
+- Override global settings with project-specific settings in `.env`
+- Override both with command-line environment variables for temporary changes
 
 ## Project Structure
 
