@@ -46,6 +46,7 @@ jobs:
     outputs:
       version_changed: ${{ steps.check.outputs.version_changed }}
       version: ${{ steps.check.outputs.version }}
+      previous_version: ${{ steps.check.outputs.previous_version }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -75,6 +76,7 @@ jobs:
               exit 1
             fi
             echo "::notice::Previous version: $PREVIOUS_VERSION"
+            echo "previous_version=$PREVIOUS_VERSION" >> $GITHUB_OUTPUT
             
             if [ "$CURRENT_VERSION" != "$PREVIOUS_VERSION" ]; then
               echo "::notice::Version changed from $PREVIOUS_VERSION to $CURRENT_VERSION"
@@ -89,6 +91,16 @@ jobs:
             echo "::notice::package.json not modified in the last commit"
             echo "version_changed=false" >> $GITHUB_OUTPUT
             echo "version=$CURRENT_VERSION" >> $GITHUB_OUTPUT
+            
+            # Try to find the previous version from the latest tag
+            LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+            if [ -n "$LATEST_TAG" ]; then
+              PREVIOUS_VERSION=${LATEST_TAG#v}
+              echo "::notice::Previous version from tag: $PREVIOUS_VERSION"
+              echo "previous_version=$PREVIOUS_VERSION" >> $GITHUB_OUTPUT
+            else
+              echo "previous_version=0.0.0" >> $GITHUB_OUTPUT
+            fi
           fi
 
   # Step 3: Publish to GitHub Packages only when version has changed
@@ -102,6 +114,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Fetch all history for generating release notes
       
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -142,4 +156,60 @@ jobs:
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           git tag -a v${{ needs.check-version.outputs.version }} -m "Release v${{ needs.check-version.outputs.version }}"
-          git push origin v${{ needs.check-version.outputs.version }} 
+          git push origin v${{ needs.check-version.outputs.version }}
+      
+      - name: Generate release notes
+        id: release_notes
+        run: |
+          CURRENT_VERSION="${{ needs.check-version.outputs.version }}"
+          PREVIOUS_VERSION="${{ needs.check-version.outputs.previous_version }}"
+          
+          echo "::notice::Generating release notes from v$PREVIOUS_VERSION to v$CURRENT_VERSION"
+          
+          # Create a temporary file for release notes
+          NOTES_FILE=$(mktemp)
+          
+          # Add header
+          echo "# Release v$CURRENT_VERSION" > $NOTES_FILE
+          echo "" >> $NOTES_FILE
+          echo "## Changes since v$PREVIOUS_VERSION" >> $NOTES_FILE
+          echo "" >> $NOTES_FILE
+          
+          # Get commit history between versions
+          if [ "$PREVIOUS_VERSION" = "0.0.0" ]; then
+            # If no previous version, get all commits
+            git log --pretty=format:"- %s (%h)" > $NOTES_FILE.commits
+          else
+            # Get commits between tags, or from the previous tag to HEAD if the current tag doesn't exist yet
+            if git rev-parse "v$CURRENT_VERSION" >/dev/null 2>&1; then
+              git log --pretty=format:"- %s (%h)" "v$PREVIOUS_VERSION"..."v$CURRENT_VERSION" > $NOTES_FILE.commits
+            else
+              git log --pretty=format:"- %s (%h)" "v$PREVIOUS_VERSION"...HEAD > $NOTES_FILE.commits
+            fi
+          fi
+          
+          # Add commits to release notes
+          cat $NOTES_FILE.commits >> $NOTES_FILE
+          
+          # Store release notes in a GitHub output variable
+          RELEASE_NOTES=$(cat $NOTES_FILE)
+          echo "RELEASE_NOTES<<EOF" >> $GITHUB_OUTPUT
+          echo "$RELEASE_NOTES" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+          
+          # Clean up temporary files
+          rm $NOTES_FILE $NOTES_FILE.commits
+      
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: v${{ needs.check-version.outputs.version }}
+          name: Release v${{ needs.check-version.outputs.version }}
+          body: ${{ steps.release_notes.outputs.RELEASE_NOTES }}
+          draft: false
+          prerelease: false
+          files: |
+            dist/index.cjs
+            dist/index.d.cts
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
