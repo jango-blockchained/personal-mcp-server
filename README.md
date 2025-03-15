@@ -29,7 +29,7 @@ npm run inspector
 
 ## Building
 
-To compile the TypeScript code to JavaScript:
+To compile the TypeScript code to JavaScript using tsup:
 
 ```bash
 npm run build
@@ -42,6 +42,22 @@ To run the compiled JavaScript code:
 ```bash
 npm start
 ```
+
+## Running with npx
+
+You can run this MCP server without installing it locally:
+
+- From GitHub Packages (after publishing):
+  ```bash
+  npx -y @aashari/boilerplate-mcp-server
+  ```
+
+- Directly from GitHub repository:
+  ```bash
+  npx -y aashari/boilerplate-mcp-server
+  ```
+
+This will fetch the package, build it, and run it in one command.
 
 ## CI/CD with GitHub Actions
 

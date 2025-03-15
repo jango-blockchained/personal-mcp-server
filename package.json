@@ -3,10 +3,13 @@
 	"version": "1.0.0",
 	"description": "A boilerplate Model Context Protocol (MCP) server implementation using TypeScript",
 	"type": "module",
-	"main": "dist/index.js",
-	"types": "dist/index.d.ts",
+	"main": "dist/index.cjs",
+	"types": "dist/index.d.cts",
+	"bin": {
+		"mcp-server": "dist/index.cjs"
+	},
 	"scripts": {
-		"build": "tsc",
+		"build": "tsup src/index.ts --format cjs --dts",
 		"clean": "rimraf dist",
 		"dev": "NODE_OPTIONS=\"--no-warnings --loader ts-node/esm\" node src/index.ts",
 		"format:check": "prettier --check \"src/**/*.ts\"",
@@ -16,7 +19,7 @@
 		"lint": "eslint src --ext .ts",
 		"prebuild": "npm run clean",
 		"prepare": "npm run build",
-		"start": "node dist/index.js",
+		"start": "node dist/index.cjs",
 		"test": "jest",
 		"test:coverage": "jest --coverage",
 		"watch": "tsc --watch"
@@ -64,6 +67,7 @@
 		"rimraf": "^5.0.10",
 		"ts-jest": "^29.2.6",
 		"ts-node": "^10.9.2",
+		"tsup": "^8.4.0",
 		"typescript": "^5.8.2",
 		"typescript-eslint": "^8.26.1"
 	}
