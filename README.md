@@ -147,6 +147,46 @@ To use this MCP server with Claude Desktop:
    
    ![Claude Using IP Tool](public/claude-setup-04.png)
 
+## Setting Up with Cursor AI
+
+To use this MCP server with Cursor AI:
+
+1. **Open Cursor Settings**:
+   - Launch Cursor
+   - Press `CMD + SHIFT + P` (or `CTRL + SHIFT + P` on Windows)
+   - Type "settings" and select "Cursor Settings"
+   - On the sidebar, select "MCP"
+   
+   ![Cursor Settings MCP](public/cursor-setup-01.png)
+
+2. **Add New MCP Server**:
+   - Click "+ Add new MCP server"
+   - A configuration form will appear
+   
+   ![Cursor Add MCP Server](public/cursor-setup-02.png)
+
+3. **Configure MCP Server**:
+   - **Name**: Enter `aashari/boilerplate-mcp-server`
+   - **Type**: Select `command` from the dropdown
+   - **Command**: Enter `npx -y aashari/boilerplate-mcp-server`
+   
+   ![Cursor MCP Server Configuration](public/cursor-setup-03.png)
+   
+   - Click "Add"
+
+4. **Verify Server Configuration**:
+   - The server should now be listed with a green indicator
+   - You should see the `get_ip_details` tool listed under the server
+   
+   ![Cursor MCP Server Listed](public/cursor-setup-04.png)
+
+5. **Test the Tool**:
+   - In the chat sidebar, ensure Agent mode is active
+   - Try asking: "give me my public IP" or "analyze this IP: 8.8.8.8"
+   - Cursor AI will use the MCP tool to fetch and display the requested information
+   
+   ![Cursor Using IP Tool](public/cursor-setup-05.png)
+
 ## Prerequisites
 
 - **Node.js**: v22.14.0 or higher (specified in `.node-version` and `package.json`).
