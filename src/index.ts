@@ -14,7 +14,7 @@ let transportInstance: SSEServerTransport | StdioServerTransport | null = null;
 export async function startServer(mode: 'stdio' | 'sse' = 'stdio') {
 	serverInstance = new McpServer({
 		name: '@aashari/boilerplate-mcp-server',
-		version: '1.2.2',
+		version: '1.2.3',
 	});
 
 	if (mode === 'stdio') {
