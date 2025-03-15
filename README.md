@@ -12,31 +12,6 @@ For detailed information about the Model Context Protocol (MCP), including core 
 - **CLI Support**: Human-friendly command-line interface for the same functionality, making it easy to test and use directly.
 - **Automated Release Management**: GitHub Actions workflow for continuous integration, testing, and publishing to GitHub Packages.
 
-## Prerequisites
-
-- **Node.js**: v22.14.0 or higher (specified in `.node-version` and `package.json`).
-- **npm**: Comes with Node.js, used for package management.
-
-## Installation
-
-Install dependencies locally:
-
-```bash
-npm install
-```
-
-This sets up the project with `@modelcontextprotocol/sdk` and development tools like `tsup`, `jest`, and `eslint`.
-
-## Running Locally
-
-Run the compiled JavaScript code:
-
-```bash
-npm start
-```
-
-This executes `node dist/index.cjs`, starting the MCP server with `stdio` transport.
-
 ## Running with npx
 
 Run the server without local installation:
@@ -171,6 +146,31 @@ To use this MCP server with Claude Desktop:
    - Claude will use the MCP tool to fetch and display the requested information
    
    ![Claude Using IP Tool](public/claude-setup-04.png)
+
+## Prerequisites
+
+- **Node.js**: v22.14.0 or higher (specified in `.node-version` and `package.json`).
+- **npm**: Comes with Node.js, used for package management.
+
+## Installation
+
+Install dependencies locally:
+
+```bash
+npm install
+```
+
+This sets up the project with `@modelcontextprotocol/sdk` and development tools like `tsup`, `jest`, and `eslint`.
+
+## Running Locally
+
+Run the compiled JavaScript code:
+
+```bash
+npm start
+```
+
+This executes `node dist/index.cjs`, starting the MCP server with `stdio` transport.
 
 ## Project Structure
 
