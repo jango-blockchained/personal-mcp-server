@@ -6,14 +6,15 @@ import { logger } from './utils/logger.util.js';
 
 import ipAddressTools from './tools/ipaddress.tool.js';
 import ipLookupResources from './resources/ipaddress.resource.js';
+import { runCli } from './cli/index.js';
 
 let serverInstance: McpServer | null = null;
 let transportInstance: SSEServerTransport | StdioServerTransport | null = null;
 
-export async function main(mode: 'stdio' | 'sse' = 'stdio') {
+export async function startServer(mode: 'stdio' | 'sse' = 'stdio') {
 	serverInstance = new McpServer({
 		name: '@aashari/boilerplate-mcp-server',
-		version: '1.1.2',
+		version: '1.1.3',
 	});
 
 	if (mode === 'stdio') {
@@ -37,6 +38,18 @@ export async function main(mode: 'stdio' | 'sse' = 'stdio') {
 		logger.error(`[src/index.ts] Failed to start server`, err);
 		process.exit(1);
 	});
+}
+
+// Main entry point
+async function main() {
+	// Check if arguments are provided (CLI mode)
+	if (process.argv.length > 2) {
+		// CLI mode: Pass arguments to CLI runner
+		await runCli(process.argv.slice(2));
+	} else {
+		// MCP Server mode: Start server with default STDIO
+		await startServer();
+	}
 }
 
 main();
