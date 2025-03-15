@@ -41,16 +41,13 @@ This executes `node dist/index.cjs`, starting the MCP server with `stdio` transp
 
 Run the server without local installation:
 
-- **From GitHub Packages** (after publishing via CI/CD):
-  ```bash
-  npx -y @aashari/boilerplate-mcp-server
-  ```
-- **Directly from GitHub Repository**:
-  ```bash
-  npx -y aashari/boilerplate-mcp-server
-  ```
+```bash
+npx -y aashari/boilerplate-mcp-server
+```
 
-Both commands fetch the package, run `npm run build` (via `prepare` script), and execute the `mcp-server` command defined in `package.json`'s `bin` field. The `-y` flag skips prompts for a seamless experience.
+This command fetches the package directly from GitHub, runs `npm run build` (via `prepare` script), and executes the `mcp-server` command defined in `package.json`'s `bin` field. The `-y` flag skips prompts for a seamless experience.
+
+> **Note**: This package is published to GitHub Packages, not the npm registry. The command format `npx username/repo` is used to fetch packages directly from GitHub repositories.
 
 ## Using as a CLI Tool
 
@@ -58,22 +55,22 @@ The package can also be used as a command-line tool for human interaction:
 
 - **Get help and available commands**:
   ```bash
-  npx -y @aashari/boilerplate-mcp-server --help
+  npx -y aashari/boilerplate-mcp-server --help
   ```
 
 - **Get current device IP details**:
   ```bash
-  npx -y @aashari/boilerplate-mcp-server get-ip-details
+  npx -y aashari/boilerplate-mcp-server get-ip-details
   ```
 
 - **Get details for a specific IP address**:
   ```bash
-  npx -y @aashari/boilerplate-mcp-server get-ip-details 8.8.8.8
+  npx -y aashari/boilerplate-mcp-server get-ip-details 8.8.8.8
   ```
 
 When run without arguments, the package starts the MCP Server for AI clients:
 ```bash
-npx -y @aashari/boilerplate-mcp-server
+npx -y aashari/boilerplate-mcp-server
 ```
 
 ## Creating Your Own MCP Server
@@ -162,7 +159,7 @@ The server provides IP address functionality in three ways:
    - **Location**: `src/cli/ipaddress.cli.ts`
    - **Parameters**: Optional `ipAddress` argument.
    - **Functionality**: Displays IP details in the terminal for human users.
-   - **Usage**: `npx -y @aashari/boilerplate-mcp-server get-ip-details [ipAddress]`
+   - **Usage**: `npx -y aashari/boilerplate-mcp-server get-ip-details [ipAddress]`
 
 **Data Flow**:
 
