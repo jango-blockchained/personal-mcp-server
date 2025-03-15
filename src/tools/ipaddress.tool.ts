@@ -25,7 +25,7 @@ async function getIpAddressDetails(args: IpAddressToolArgsType, _extra: RequestH
 function register(server: McpServer) {
 	logger.debug(`[src/tools/ipaddress.ts@register] Registering tools...`);
 	server.tool(
-		'get_ip_details',
+		'get-ip-details',
 		'Get details about a specific IP address or the current device (if no IP address is provided)',
 		IpAddressToolArgs.shape,
 		getIpAddressDetails,

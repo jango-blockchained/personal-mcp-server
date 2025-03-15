@@ -28,7 +28,7 @@
 
 ### Tools
 
-- **Tool Name**: `get_ip_details`
+- **Tool Name**: `get-ip-details`
 - **Definition**: `src/tools/ipaddress.tool.ts`
 - **Parameters**: Optional `ipAddress` (validated by Zod)
 - **Returns**: Structured IP details as plain text
@@ -67,7 +67,7 @@
 - **Tool Registration Example**:
   ```typescript
   server.tool(
-      'get_ip_details',
+      'get-ip-details',
       'Fetch IP details',
       IpAddressToolArgs.shape,
       async (args) => {

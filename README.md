@@ -63,12 +63,12 @@ The package can also be used as a command-line tool for human interaction:
 
 - **Get current device IP details**:
   ```bash
-  npx -y @aashari/boilerplate-mcp-server get_ip_details
+  npx -y @aashari/boilerplate-mcp-server get-ip-details
   ```
 
 - **Get details for a specific IP address**:
   ```bash
-  npx -y @aashari/boilerplate-mcp-server get_ip_details 8.8.8.8
+  npx -y @aashari/boilerplate-mcp-server get-ip-details 8.8.8.8
   ```
 
 When run without arguments, the package starts the MCP Server for AI clients:
@@ -145,7 +145,7 @@ The project follows a clean architecture pattern with clear separation of concer
 
 The server provides IP address functionality in three ways:
 
-1. **Tool: `get_ip_details`**:
+1. **Tool: `get-ip-details`**:
 
    - **Location**: `src/tools/ipaddress.tool.ts`
    - **Parameters**: Optional `ipAddress` (string).
@@ -158,11 +158,11 @@ The server provides IP address functionality in three ways:
    - **Functionality**: Exposes current device IP details as a text/plain resource.
    - **Usage**: Accessible as context by MCP hosts.
 
-3. **CLI Command: `get_ip_details`**:
+3. **CLI Command: `get-ip-details`**:
    - **Location**: `src/cli/ipaddress.cli.ts`
    - **Parameters**: Optional `ipAddress` argument.
    - **Functionality**: Displays IP details in the terminal for human users.
-   - **Usage**: `npx -y @aashari/boilerplate-mcp-server get_ip_details [ipAddress]`
+   - **Usage**: `npx -y @aashari/boilerplate-mcp-server get-ip-details [ipAddress]`
 
 **Data Flow**:
 
