@@ -115,22 +115,32 @@ Update the package information in `package.json`:
 
 ### 3. Implement Your Own Functionality
 
-The boilerplate includes IP address lookup functionality as an example. To add your own functionality:
+The boilerplate includes IP address lookup functionality as an example. To add your own functionality (e.g., weather information), follow these steps:
 
-1. **Create a Service**: 
-   - Create a new file in `src/services/` (e.g., `weather.service.ts`)
-   - Implement API calls or data processing logic
-   - Example for a weather service:
+1. **Create Service Types**:
+   - Create a new file in `src/services/` (e.g., `weather.service.type.ts`)
+   - Define the data structures for your service
+   - Example:
    ```typescript
-   // src/services/weather.service.ts
-   import { logger } from '../utils/logger.util.js';
-
-   interface WeatherData {
+   // src/services/weather.service.type.ts
+   export interface WeatherData {
      location: string;
      temperature: number;
      conditions: string;
-     // Add more fields as needed
+     humidity: number;
+     windSpeed: number;
+     timestamp: string;
    }
+   ```
+
+2. **Create a Service**:
+   - Create a new file in `src/services/` (e.g., `weather.service.ts`)
+   - Implement API calls or data processing logic
+   - Example:
+   ```typescript
+   // src/services/weather.service.ts
+   import { logger } from '../utils/logger.util.js';
+   import { WeatherData } from './weather.service.type.js';
 
    async function get(location: string): Promise<WeatherData> {
      logger.debug(`[src/services/weather.service.ts@get] Getting weather for ${location}...`);
@@ -142,13 +152,16 @@ The boilerplate includes IP address lookup functionality as an example. To add y
        location,
        temperature: 22,
        conditions: 'Sunny',
+       humidity: 65,
+       windSpeed: 10,
+       timestamp: new Date().toISOString(),
      };
    }
 
    export default { get };
    ```
 
-2. **Create a Controller**:
+3. **Create a Controller**:
    - Create a new file in `src/controllers/` (e.g., `weather.controller.ts`)
    - Implement business logic that uses your service
    - Example:
@@ -165,17 +178,25 @@ The boilerplate includes IP address lookup functionality as an example. To add y
        weatherData,
      );
      
+     const lines: string[] = [];
+     lines.push(`Location: ${weatherData.location}`);
+     lines.push(`Temperature: ${weatherData.temperature}°C`);
+     lines.push(`Conditions: ${weatherData.conditions}`);
+     lines.push(`Humidity: ${weatherData.humidity}%`);
+     lines.push(`Wind Speed: ${weatherData.windSpeed} km/h`);
+     lines.push(`Updated: ${weatherData.timestamp}`);
+     
      return {
-       content: `Weather for ${weatherData.location}: ${weatherData.temperature}°C, ${weatherData.conditions}`,
+       content: lines.join('\n'),
      };
    }
 
    export default { get };
    ```
 
-3. **Create a Tool**:
-   - Create type definitions in `src/tools/weather.type.ts`
-   - Implement the tool in `src/tools/weather.tool.ts`
+4. **Create Tool Types**:
+   - Create a new file in `src/tools/` (e.g., `weather.type.ts`)
+   - Define Zod schema for tool arguments
    - Example:
    ```typescript
    // src/tools/weather.type.ts
@@ -190,6 +211,10 @@ The boilerplate includes IP address lookup functionality as an example. To add y
    export { WeatherToolArgs, type WeatherToolArgsType };
    ```
 
+5. **Create a Tool**:
+   - Create a new file in `src/tools/` (e.g., `weather.tool.ts`)
+   - Implement the MCP tool that uses your controller
+   - Example:
    ```typescript
    // src/tools/weather.tool.ts
    import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
@@ -229,8 +254,53 @@ The boilerplate includes IP address lookup functionality as an example. To add y
    export default { register };
    ```
 
-4. **Create a CLI Command** (optional):
-   - Create a new file in `src/cli/weather.cli.ts`
+6. **Create a Resource** (optional):
+   - Create a new file in `src/resources/` (e.g., `weather.resource.ts`)
+   - Implement the MCP resource
+   - Example:
+   ```typescript
+   // src/resources/weather.resource.ts
+   import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
+   import { logger } from '../utils/logger.util.js';
+
+   import weatherController from '../controllers/weather.controller.js';
+
+   /**
+    * Register weather resources with the MCP server
+    * @param server The MCP server instance
+    */
+   function register(server: McpServer) {
+     logger.debug(
+       `[src/resources/weather.resource.ts@register] Registering weather resources...`,
+     );
+     server.resource(
+       'Default Location Weather',
+       'weather://default',
+       {
+         description: 'Weather information for the default location (New York)',
+       },
+       async (_uri, _extra) => {
+         const resourceContent = await weatherController.get('New York');
+         return {
+           contents: [
+             {
+               uri: 'weather://default',
+               text: resourceContent.content,
+               mimeType: 'text/plain',
+               description: 'Weather information for New York',
+             },
+           ],
+         };
+       },
+     );
+   }
+
+   export default { register };
+   ```
+
+7. **Create a CLI Command**:
+   - Create a new file in `src/cli/` (e.g., `weather.cli.ts`)
+   - Implement the CLI command
    - Example:
    ```typescript
    // src/cli/weather.cli.ts
@@ -265,20 +335,97 @@ The boilerplate includes IP address lookup functionality as an example. To add y
    export default { register };
    ```
 
-5. **Register Your Components**:
-   - Update `src/index.ts` to register your tool
-   - Update `src/cli/index.ts` to register your CLI command
+8. **Update Main Entry Point**:
+   - Modify `src/index.ts` to register your tool and resource
+   - Example:
+   ```typescript
+   // src/index.ts (partial)
+   import weatherTools from './tools/weather.tool.js';
+   import weatherResources from './resources/weather.resource.js';
+
+   export async function startServer(mode: 'stdio' | 'sse' = 'stdio') {
+     // ... existing code ...
+
+     // register tools
+     ipAddressTools.register(serverInstance);
+     weatherTools.register(serverInstance);  // Add this line
+
+     // register resources
+     ipLookupResources.register(serverInstance);
+     weatherResources.register(serverInstance);  // Add this line
+
+     // ... existing code ...
+   }
+   ```
+
+9. **Update CLI Entry Point**:
+   - Modify `src/cli/index.ts` to register your CLI command
+   - Example:
+   ```typescript
+   // src/cli/index.ts (partial)
+   import ipAddressCli from './ipaddress.cli.js';
+   import weatherCli from './weather.cli.js';  // Add this line
+
+   export async function runCli(args: string[]) {
+     // ... existing code ...
+
+     // Register CLI commands
+     ipAddressCli.register(program);
+     weatherCli.register(program);  // Add this line
+
+     // ... existing code ...
+   }
+   ```
+
+10. **Create Tests**:
+    - Create test files for your controller and service
+    - Example:
+    ```typescript
+    // src/controllers/weather.test.ts
+    import weatherController from './weather.controller';
+    import weatherService from '../services/weather.service';
+
+    // Mock the weather service
+    jest.mock('../services/weather.service', () => ({
+      get: jest.fn(),
+    }));
+
+    describe('Weather Controller', () => {
+      beforeEach(() => {
+        jest.clearAllMocks();
+      });
+
+      it('should format weather data correctly', async () => {
+        // Mock the service response
+        const mockWeatherData = {
+          location: 'Test City',
+          temperature: 25,
+          conditions: 'Cloudy',
+          humidity: 70,
+          windSpeed: 15,
+          timestamp: '2023-01-01T12:00:00Z',
+        };
+        (weatherService.get as jest.Mock).mockResolvedValue(mockWeatherData);
+
+        // Call the controller
+        const result = await weatherController.get('Test City');
+
+        // Verify the service was called
+        expect(weatherService.get).toHaveBeenCalledWith('Test City');
+
+        // Verify the result
+        expect(result.content).toContain('Location: Test City');
+        expect(result.content).toContain('Temperature: 25°C');
+        expect(result.content).toContain('Conditions: Cloudy');
+      });
+    });
+    ```
 
 ### 4. Test Your Implementation
 
 - Test the MCP server with the MCP Inspector: `npm run inspector`
 - Test the CLI: `npm run build && node dist/index.cjs get_weather_info "New York"`
-- Write unit tests in `src/controllers/weather.test.ts` and `src/services/weather.test.ts`
-
-### 5. Deploy and Publish
-
-- Push your changes to GitHub
-- The CI/CD workflow will automatically build, test, and publish your package when you update the version
+- Run your tests: `npm test`
 
 ## Version Management
 
