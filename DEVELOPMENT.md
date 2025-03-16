@@ -19,35 +19,49 @@ This sets up the project with `@modelcontextprotocol/sdk` and development tools 
 
 ## Development Environment
 
+### Running the MCP Server in Development Mode
+
 Run the server in development mode with hot reloading using `ts-node`:
 
 ```bash
 npm run dev
 ```
 
-Test the server with the MCP Inspector (a debugging tool for MCP servers):
+### Testing with the MCP Inspector
+
+To test the MCP server during development:
 
 ```bash
 npm run inspector
 ```
 
-Both commands use the `stdio` transport by default, as defined in `src/index.ts`.
+Then:
+1. Open http://localhost:5173/ in your browser
+2. Click the "Start" button in the inspector interface
 
-## Running Locally
+This provides a visual interface for testing your MCP server's tools and resources.
 
-Run the compiled JavaScript code:
+### Using CLI Commands in Development Mode
 
-```bash
-npm start
-```
-
-This executes `node dist/index.cjs`, starting the MCP server with `stdio` transport.
-
-Run a CLI command:
+To see available CLI commands during development:
 
 ```bash
-npm start -- get-ip-details
+npm run dev -- --help
 ```
+
+To run a specific CLI command during development:
+
+```bash
+npm run dev -- get-ip-details
+```
+
+Example for running other commands:
+
+```bash
+npm run dev -- list-spaces
+```
+
+Both the MCP server and CLI commands use the `stdio` transport by default, as defined in `src/index.ts`.
 
 ## Building
 
@@ -58,6 +72,22 @@ npm run build
 ```
 
 This generates `dist/index.cjs` (executable CommonJS bundle) and `dist/index.d.cts` (TypeScript declarations). The `prebuild` script (`rimraf dist`) ensures a clean `dist/` folder before each build.
+
+## Running the Built Version
+
+Run the compiled JavaScript code:
+
+```bash
+npm start
+```
+
+This executes `node dist/index.cjs`, starting the MCP server with `stdio` transport.
+
+Run a CLI command with the built version:
+
+```bash
+npm start -- get-ip-details
+```
 
 ## Project Structure
 
