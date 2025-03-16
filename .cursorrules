@@ -1,120 +1,93 @@
 # .cursorrules for Boilerplate MCP Server
 
-## Project Context
+## Project Overview
 
-- **Project Name**: `@aashari/boilerplate-mcp-server`
-- **Version**: 1.2.4 (sync with `package.json` and commit history)
-- **Description**: A TypeScript-based MCP (Model Context Protocol) server template for exposing IP address lookup capabilities to AI clients (e.g., Claude Desktop, Cursor AI), serving as a foundation for custom MCP implementations.
-- **Technology Stack**:
-  - Node.js v22.14.0+
-  - TypeScript with NodeNext module resolution
-  - MCP SDK v1.7.0 (`@modelcontextprotocol/sdk`)
-  - Bundling via `tsup` into CommonJS (`dist/index.cjs`)
-- **Last Updated**: March 15, 2025
+- **Name**: `@aashari/boilerplate-mcp-server`
+- **Version**: 1.3.1 (sync with `package.json`)
+- **Description**: TypeScript MCP server template for IP lookup, designed for AI clients (e.g., Claude, Cursor AI).
+- **Tech**: Node.js v22.14.0+, TypeScript (NodeNext), MCP SDK v1.7.0, CommonJS via `tsup`.
 
-## Project Setup
+## Setup
 
-- **Entry Point**: `src/index.ts` (server or CLI mode based on arguments)
-- **Build Command**: `npm run build` (`tsup src/index.ts --format cjs --dts`)
-- **Execution**:
-  - Local: `npm start`
-  - CLI: `node dist/index.cjs <command>` (e.g., `get-ip-details`)
-  - Remote: `npx -y @aashari/boilerplate-mcp-server`
-- **Version Management**: Use `npm run update-version <new-version>` to sync `package.json` and `src/index.ts` (script in `scripts/update-version.js`).
+- **Entry**: `src/index.ts` (server/CLI mode)
+- **Build**: `npm run build` → `dist/index.cjs`
+- **Run**: 
+  - `npm start` (local)
+  - `npx -y @aashari/boilerplate-mcp-server` (remote)
+- **Versioning**: `npm run update-version <new-version>` (updates `package.json`, `src/index.ts`)
 
-## MCP Server Functionality
+## Structure
 
-### Tools
+- `src/cli/`: CLI commands (e.g., `ipaddress.cli.ts`)
+- `src/controllers/`: Logic (e.g., `ipaddress.controller.ts`)
+- `src/resources/`: MCP resources (e.g., `ipaddress.resource.ts`)
+- `src/services/`: API calls (e.g., `vendor.ip-api.com.service.ts`)
+- `src/tools/`: MCP tools with Zod (e.g., `ipaddress.tool.ts`)
+- `src/utils/`: Shared utils (e.g., `logger.util.ts`)
 
-- **Tool Name**: `get-ip-details`
-  - **Definition**: `src/tools/ipaddress.tool.ts`
-  - **Parameters**: Optional `ipAddress` (Zod-validated, `src/tools/ipaddress.type.ts`)
-  - **Returns**: IP details as plain text via `ipAddressController`
+## Core Rules
 
-### Resources
+- **Paths**: Use full relative paths from project root (e.g., `src/tools/ipaddress.tool.ts`).
+  - ❌ `tools/ip.ts`
+  - ✅ `src/tools/ipaddress.tool.ts`
+- **Terminal**: Append `| cat` to capture output (e.g., `ls -la | cat`), except interactive cmds (e.g., `npm run inspector`).
+- **Dir Context**: Run `tree -L 4 --gitignore | cat` before ops; summarize relevant dirs (e.g., `src/services/`).
 
-- **Resource Name**: `ip://current`
-  - **Definition**: `src/resources/ipaddress.resource.ts`
-  - **Functionality**: Current device IP details as `text/plain`
+## Coding Guidelines
 
-### CLI Commands
+- **TypeScript**: Strict typing per `tsconfig.json`; NodeNext resolution.
+- **Formatting**: Prettier (4-space indent, single quotes, trailing commas, 100 width) per `.prettierrc`. Suggest `npm run format` for AI edits with: “Run `npm run format` to ensure consistency.”
+- **Linting**: ESLint per `eslint.config.js`.
+- **Imports**: ESM syntax with `.js` (e.g., `import { logger } from '../utils/logger.util.js'`).
+- **Deps**: Check `package.json`; suggest `npm install <package>@latest` for new ones.
 
-- **Command**: `get-ip-details [ipAddress]`
-  - **Definition**: `src/cli/ipaddress.cli.ts`
-  - **Description**: Fetches IP details via `ipAddressController`
+## MCP Features
 
-### Data Flow
-
-- **External APIs**: IP lookup via `src/services/vendor.ip-api.com.service.ts` (http://ip-api.com/json)
-- **Controllers**: `src/controllers/ipaddress.controller.ts` formats API responses
-- **Output**: Delivered through MCP tools, resources, or CLI
-
-## Guidelines for AI Assistance
-
-### Code Style
-
-- **Imports**: Use ESM syntax with `.js` extensions (e.g., `import { logger } from '../utils/logger.util.js'`).
-- **Documentation**: JSDoc all public methods (e.g., `src/controllers/ipaddress.controller.ts`).
-- **Naming**: CamelCase for variables/functions, kebab-case for CLI commands.
-
-### MCP Implementation
-
-- **Tool Registration**:
+- **Tools**: Define in `src/tools/`, register in `src/index.ts` with Zod:
   ```typescript
-  server.tool(
-    'get-ip-details',
-    'Get details about a specific IP address or current device',
-    IpAddressToolArgs.shape,
-    async (args) => {
-      const result = await ipAddressController.get(args.ipAddress);
-      return { content: [{ type: 'text', text: result.content }] };
-    },
-  );
+  server.tool('get-ip-details', 'Get IP details', z.object({ ipAddress: z.string().optional() }), async (args) => { /* logic */ });
   ```
-- **Resource Registration**:
+- **Resources**: Define in `src/resources/`, register in `src/index.ts`:
   ```typescript
-  server.resource(
-    'Current Device IP',
-    'ip://current',
-    { description: 'Details about your current IP address' },
-    async () => {
-      const data = await ipAddressController.get();
-      return { contents: [{ uri: 'ip://current', text: data.content, mimeType: 'text/plain' }] };
-    },
-  );
+  server.resource('Current IP', 'ip://current', {}, async () => ({ contents: [{ uri: 'ip://current', text: 'data', mimeType: 'text/plain' }] }));
   ```
+- **Transport**: Use `StdioServerTransport`.
 
-### Best Practices
+## IP Lookup Integration
 
-- **Input Validation**: Use Zod schemas in `src/tools/*.type.ts` for tool arguments.
-- **Logging**: Leverage `logger.util.ts`:
-  - `logger.debug` for tracing (e.g., API calls, registrations)
-  - `logger.info` for key events (e.g., server start)
-  - `logger.error` for failures
-- **Error Handling**: Wrap async operations in try-catch, log errors, and exit gracefully if critical (e.g., `process.exit(1)` in `src/index.ts`).
-- **Testing**: Maintain Jest tests in `src/**/*.test.ts` (e.g., `ipaddress.test.ts`), targeting real API calls with extended timeouts (10s).
+- **API**: Use `src/services/vendor.ip-api.com.service.ts` (http://ip-api.com/json):
+  ```typescript
+  const data = await ipApiService.get(args.ipAddress);
+  ```
+- **Errors**: Try-catch API calls, log with `logger.error`.
 
-### Development Workflow
+## Best Practices
 
-- **Dev Mode**: `npm run dev` (hot reloading with `ts-node`)
-- **Debugging**: `npm run inspector` (STDIO transport testing with MCP Inspector)
-- **CI/CD**: GitHub Actions (`.github/workflows/ci-cd.yml`) handles:
-  - Formatting (`npm run format:check`)
-  - Linting (`npm run lint`)
-  - Testing (`npm test`)
-  - Building and publishing to GitHub Packages
-  - Auto-generating GitHub Releases with commit history
+- **Logging**: Use `src/utils/logger.util.ts` (`debug`, `info`, `warn`, `error`) with timestamps.
+- **Errors**: Wrap async ops in try-catch:
+  ```typescript
+  try { /* call */ } catch (e) { logger.error('Failed', e); throw e; }
+  ```
+- **Docs**: JSDoc public methods (e.g., `get` in `ipaddress.controller.ts`).
 
-## Extending the Boilerplate
+## Workflow
 
-- **New Features**: Follow the pattern in `DEVELOPMENT.md`:
-  1. Define types (`src/services/*.type.ts`)
-  2. Implement services (`src/services/`)
-  3. Create controllers (`src/controllers/`)
-  4. Add tools (`src/tools/`) and resources (`src/resources/`)
-  5. Register in `src/index.ts`
-- **Example**: See IP lookup implementation as a template (e.g., `vendor.ip-api.com.service.ts` to `ipaddress.tool.ts`).
+- **Dev**: `npm run dev` (hot reload)
+- **Debug**: `npm run inspector` (STDIO testing)
+- **Test**: `npm test` (Jest); suggest before edits.
+- **CI/CD**: GitHub Actions (`.github/workflows/ci-cd.yml`) for lint, test, build, publish.
 
-## Objective
+## Extending Features
 
-Assist developers in maintaining and extending this MCP server template, ensuring it remains a robust, reusable foundation for custom MCP implementations while adhering to workspace-wide standards in the root `.cursorrules`.
+- **Steps**:
+  1. Add service in `src/services/` (e.g., `vendor.new-api.service.ts`)
+  2. Add controller in `src/controllers/`
+  3. Add tool in `src/tools/` with Zod
+  4. Add resource in `src/resources/` (optional)
+  5. Add CLI in `src/cli/`
+  6. Register in `src/index.ts`
+- **Example**: See IP lookup (`vendor.ip-api.com.service.ts` → `ipaddress.tool.ts`).
+
+## Goal
+
+Guide AI to maintain and extend this MCP server template, keeping it a reusable foundation for custom implementations.
