@@ -4,6 +4,7 @@ import { SSEServerTransport } from '@modelcontextprotocol/sdk/server/sse.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import { logger } from './utils/logger.util.js';
 import { config } from './utils/config.util.js';
+import { createUnexpectedError } from './utils/error.util.js';
 
 import ipAddressTools from './tools/ipaddress.tool.js';
 import ipLookupResources from './resources/ipaddress.resource.js';
@@ -36,7 +37,7 @@ export async function startServer(mode: 'stdio' | 'sse' = 'stdio') {
 	if (mode === 'stdio') {
 		transportInstance = new StdioServerTransport();
 	} else {
-		throw new Error('SSE mode is not supported yet');
+		throw createUnexpectedError('SSE mode is not supported yet');
 	}
 
 	logger.info(

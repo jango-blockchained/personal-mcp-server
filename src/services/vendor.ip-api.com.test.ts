@@ -1,4 +1,5 @@
 import ipApiService from './vendor.ip-api.com.service.js';
+import { ErrorType, McpError } from '../utils/error.util.js';
 
 describe('Vendor ip-api.com Service', () => {
 	describe('get: current IP address', () => {
@@ -34,12 +35,18 @@ describe('Vendor ip-api.com Service', () => {
 			// Use an invalid IP address
 			const invalidIp = 'invalid-ip';
 
-			// Call the function with the real API
-			const result = await ipApiService.get(invalidIp);
+			// Call the function with the real API and expect it to throw an McpError
+			await expect(ipApiService.get(invalidIp)).rejects.toThrow(McpError);
 
-			// Verify the response indicates failure
-			expect(result).toHaveProperty('status', 'fail');
-			expect(result).toHaveProperty('message');
+			// Try to get the error to verify its properties
+			try {
+				await ipApiService.get(invalidIp);
+			} catch (error) {
+				// Verify the error is an McpError with the correct type
+				expect(error).toBeInstanceOf(McpError);
+				expect((error as McpError).type).toBe(ErrorType.API_ERROR);
+				expect((error as McpError).message).toContain('IP API error');
+			}
 		}, 10000); // Increase timeout for API call
 	});
 });

@@ -1,5 +1,6 @@
 import { Command } from 'commander';
 import { logger } from '../utils/logger.util.js';
+import { handleCliError } from '../utils/error.util.js';
 
 import ipAddressController from '../controllers/ipaddress.controller.js';
 
@@ -24,12 +25,9 @@ function register(program: Command) {
 					`[src/cli/ipaddress.cli.ts@get-ip-details] IP details fetched successfully`,
 					result,
 				);
+				console.log(result.content);
 			} catch (error) {
-				logger.error(
-					'[src/cli/ipaddress.cli.ts@get-ip-details] Failed to get IP details',
-					error,
-				);
-				process.exit(1);
+				handleCliError(error);
 			}
 		});
 }
