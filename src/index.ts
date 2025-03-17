@@ -30,8 +30,8 @@ export async function startServer(mode: 'stdio' | 'sse' = 'stdio') {
 	logger.info(`[src/index.ts] Config DEBUG value: ${config.get('DEBUG')}`);
 
 	serverInstance = new McpServer({
-		name: '@aashari/boilerplate-mcp-server',
-		version: '1.4.0',
+		name: 'boilerplate-mcp-server',
+		version: '1.5.0',
 	});
 
 	if (mode === 'stdio') {
