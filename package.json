@@ -18,7 +18,7 @@
 		"boilerplate-mcp-server": "dist/index.cjs"
 	},
 	"scripts": {
-		"build": "tsup src/index.ts --format cjs,esm --dts --clean",
+		"build": "tsup src/index.ts --format cjs,esm --clean",
 		"check": "npm run format:check && npm run lint",
 		"clean": "rimraf dist",
 		"dev": "NODE_OPTIONS=\"--no-warnings --loader ts-node/esm\" node src/index.ts",
@@ -89,7 +89,6 @@
 		"commander": "13.1.0",
 		"dotenv": "16.4.7",
 		"zod": "3.24.2",
-		"typescript": "5.8.2",
 		"tsup": "8.4.0"
 	},
 	"devDependencies": {
@@ -106,6 +105,7 @@
 		"rimraf": "6.0.1",
 		"ts-jest": "29.2.6",
 		"ts-node": "10.9.2",
-		"typescript-eslint": "8.26.1"
+		"typescript-eslint": "8.26.1",
+		"typescript": "5.8.2"
 	}
 }
