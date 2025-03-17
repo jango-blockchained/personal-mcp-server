@@ -33,7 +33,7 @@
 		"start": "npm run build && node dist/index.cjs",
 		"test": "jest",
 		"test:watch": "jest --watch",
-		"test:coverage": "jest --coverage --coverageReporters=text,html",
+		"test:coverage": "jest --coverage --coverageReporters=text --coverageReporters=json-summary --coverageReporters=html",
 		"update-version": "node scripts/update-version.js"
 	},
 	"files": [
