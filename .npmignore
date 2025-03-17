@@ -1,0 +1,11 @@
+.src/
+scripts/
+*.ts
+*.js.map
+tests/
+coverage/
+.gitignore
+.eslintrc.js
+.prettierrc
+tsconfig.json
+jest.config.js
