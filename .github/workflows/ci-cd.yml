@@ -121,8 +121,8 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '22.x'
-          registry-url: 'https://npm.pkg.github.com'
-          scope: '@aashari'
+          registry-url: 'https://registry.npmjs.org/'
+          scope: ''
       
       - name: Install dependencies
         run: npm ci
@@ -133,10 +133,10 @@ jobs:
           name: dist
           path: dist/
       
-      - name: Publish to GitHub Packages
+      - name: Publish to npm
         run: npm publish
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
           
       - name: Check if tag exists
         id: check_tag
