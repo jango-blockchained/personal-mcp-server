@@ -1,6 +1,6 @@
 {
 	"name": "@aashari/boilerplate-mcp-server",
-	"version": "1.7.3",
+	"version": "1.7.4",
 	"description": "A boilerplate Model Context Protocol (MCP) server implementation using TypeScript",
 	"type": "module",
 	"main": "dist/index.cjs",
@@ -46,7 +46,8 @@
 		"url": "git+https://github.com/aashari/boilerplate-mcp-server.git"
 	},
 	"publishConfig": {
-		"access": "public"
+		"access": "public",
+		"registry": "https://npm.pkg.github.com"
 	},
 	"keywords": [
 		"mcp",
