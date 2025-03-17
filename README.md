@@ -72,7 +72,7 @@ To use this MCP server with Claude Desktop:
    - Launch Claude Desktop
    - Click on the settings icon (gear) in the top-right corner
 
-   ![Claude Desktop Settings](public/claude-setup-01.png)
+   ![Claude Desktop Settings](https://raw.githubusercontent.com/aashari/mcp-atlassian-confluence/refs/heads/main/public/claude-setup-01.png)
 
 2. **Edit MCP Configuration**:
 
@@ -101,7 +101,7 @@ To use this MCP server with Claude Desktop:
 
    - Close and reopen Claude Desktop to apply the changes
 
-   ![Claude Desktop Home](public/claude-setup-02.png)
+   ![Claude Desktop Home](https://raw.githubusercontent.com/aashari/mcp-atlassian-confluence/refs/heads/main/public/claude-setup-02.png)
 
 5. **Verify Tool Availability**:
 
@@ -109,14 +109,14 @@ To use this MCP server with Claude Desktop:
    - Click it to see available tools
    - Ensure the `get-ip-details` tool is listed
 
-   ![Claude Tools Menu](public/claude-setup-03.png)
+   ![Claude Tools Menu](https://raw.githubusercontent.com/aashari/mcp-atlassian-confluence/refs/heads/main/public/claude-setup-03.png)
 
 6. **Test the Tool**:
 
    - Try asking Claude: "give me my public IP" or "analyze this IP: 8.8.8.8"
    - Claude will use the MCP tool to fetch and display the requested information
 
-   ![Claude Using IP Tool](public/claude-setup-04.png)
+   ![Claude Using IP Tool](https://raw.githubusercontent.com/aashari/mcp-atlassian-confluence/refs/heads/main/public/claude-setup-04.png)
 
 ## Setting Up with Cursor AI
 
@@ -129,14 +129,14 @@ To use this MCP server with Cursor AI:
    - Type "settings" and select "Cursor Settings"
    - On the sidebar, select "MCP"
 
-   ![Cursor Settings MCP](public/cursor-setup-01.png)
+   ![Cursor Settings MCP](https://raw.githubusercontent.com/aashari/mcp-atlassian-confluence/refs/heads/main/public/cursor-setup-01.png)
 
 2. **Add New MCP Server**:
 
    - Click "+ Add new MCP server"
    - A configuration form will appear
 
-   ![Cursor Add MCP Server](public/cursor-setup-02.png)
+   ![Cursor Add MCP Server](https://raw.githubusercontent.com/aashari/mcp-atlassian-confluence/refs/heads/main/public/cursor-setup-02.png)
 
 3. **Configure MCP Server**:
 
@@ -163,7 +163,7 @@ To use this MCP server with Cursor AI:
    - The server should now be listed with a green indicator
    - You should see the `get_ip_details` tool listed under the server
 
-   ![Cursor MCP Server Listed](public/cursor-setup-04.png)
+   ![Cursor MCP Server Listed](https://raw.githubusercontent.com/aashari/mcp-atlassian-confluence/refs/heads/main/public/cursor-setup-04.png)
 
 5. **Test the Tool**:
 
@@ -171,7 +171,7 @@ To use this MCP server with Cursor AI:
    - Try asking: "give me my public IP" or "analyze this IP: 8.8.8.8"
    - Cursor AI will use the MCP tool to fetch and display the requested information
 
-   ![Cursor Using IP Tool](public/cursor-setup-05.png)
+   ![Cursor Using IP Tool](https://raw.githubusercontent.com/aashari/mcp-atlassian-confluence/refs/heads/main/public/cursor-setup-05.png)
 
 ## Using as a CLI Tool
 
