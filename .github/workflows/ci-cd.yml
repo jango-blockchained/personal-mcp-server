@@ -64,18 +64,11 @@ jobs:
           fi
           echo "::notice::Current version: $CURRENT_VERSION"
           
-          # Get the previous commit on main
-          git fetch origin main
-          
-          # Check if package.json was modified in the last commit
-          if git diff --name-only HEAD^ HEAD | grep -q "package.json"; then
-            # Get the previous version
-            PREVIOUS_VERSION=$(git show HEAD^:package.json | node -p "JSON.parse(require('fs').readFileSync(0)).version")
-            if [ -z "$PREVIOUS_VERSION" ]; then
-              echo "::error::Could not read previous version from package.json"
-              exit 1
-            fi
-            echo "::notice::Previous version: $PREVIOUS_VERSION"
+          # Try to find the previous version from the latest tag
+          LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+          if [ -n "$LATEST_TAG" ]; then
+            PREVIOUS_VERSION=${LATEST_TAG#v}
+            echo "::notice::Previous version from tag: $PREVIOUS_VERSION"
             echo "previous_version=$PREVIOUS_VERSION" >> $GITHUB_OUTPUT
             
             if [ "$CURRENT_VERSION" != "$PREVIOUS_VERSION" ]; then
@@ -88,19 +81,11 @@ jobs:
               echo "version=$CURRENT_VERSION" >> $GITHUB_OUTPUT
             fi
           else
-            echo "::notice::package.json not modified in the last commit"
-            echo "version_changed=false" >> $GITHUB_OUTPUT
+            # No tags found, assume version changed
+            echo "::notice::No previous version tag found, assuming version changed"
+            echo "version_changed=true" >> $GITHUB_OUTPUT
             echo "version=$CURRENT_VERSION" >> $GITHUB_OUTPUT
-            
-            # Try to find the previous version from the latest tag
-            LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
-            if [ -n "$LATEST_TAG" ]; then
-              PREVIOUS_VERSION=${LATEST_TAG#v}
-              echo "::notice::Previous version from tag: $PREVIOUS_VERSION"
-              echo "previous_version=$PREVIOUS_VERSION" >> $GITHUB_OUTPUT
-            else
-              echo "previous_version=0.0.0" >> $GITHUB_OUTPUT
-            fi
+            echo "previous_version=0.0.0" >> $GITHUB_OUTPUT
           fi
 
   # Step 3: Publish to GitHub Packages only when version has changed
