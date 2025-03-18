@@ -39,6 +39,7 @@ const tsupOptions = [
 	'--external',
 	'@modelcontextprotocol/sdk,commander,dotenv,zod',
 	'--shims',
+	'--no-config',
 ];
 
 try {
