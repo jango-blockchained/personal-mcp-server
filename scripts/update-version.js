@@ -67,8 +67,7 @@ try {
 const binTsPath = path.join(rootDir, 'src', 'bin.ts');
 try {
 	if (fs.existsSync(binTsPath)) {
-		let binTsContent = fs.readFileSync(binTsPath, 'utf8');
-		// Nothing to update in bin.ts since it uses index.ts for server initialization
+		// Just check if the file exists, no need to read content since we don't use it
 		console.log(`Checked src/bin.ts - no version references need updating`);
 	}
 } catch (error) {
