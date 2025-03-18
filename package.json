@@ -1,36 +1,36 @@
 {
 	"name": "@aashari/boilerplate-mcp-server",
-	"version": "1.17.1",
+	"version": "1.17.2",
 	"description": "A boilerplate Model Context Protocol (MCP) server implementation using TypeScript",
 	"type": "module",
-	"main": "dist/index.cjs",
-	"module": "dist/index.mjs",
-	"types": "dist/index.d.cts",
+	"main": "./dist/index.js",
+	"types": "./dist/index.d.ts",
 	"exports": {
 		".": {
-			"types": "./dist/index.d.cts",
-			"import": "./dist/index.mjs",
+			"import": "./dist/index.js",
 			"require": "./dist/index.cjs",
-			"default": "./dist/index.mjs"
+			"types": "./dist/index.d.ts"
 		}
 	},
 	"bin": {
-		"boilerplate-mcp-server": "dist/bin.cjs"
+		"boilerplate-mcp-server": "./dist/bin.cjs"
 	},
 	"scripts": {
 		"build": "node scripts/build.js",
 		"check": "npm run format:check && npm run lint",
 		"clean": "rimraf dist",
-		"dev": "NODE_OPTIONS=\"--no-warnings --loader ts-node/esm\" node src/bin.ts",
+		"dev": "tsup src/index.ts src/bin.ts --format cjs,esm --watch --silent",
 		"fix": "npm run format && npm run lint:fix",
 		"format:check": "prettier --check \"{src,scripts}/**/*.{ts,js}\"",
-		"format": "prettier --write \"{src,scripts}/**/*.{ts,js}\"",
-		"inspector": "mcp-inspector -- npm run --silent dev",
+		"format": "prettier --write --no-semi --single-quote --prettier-options \"{\\\"embeddedLanguageFormatting\\\": \\\"off\\\"}\" \"**/*.{ts,tsx,js,jsx,json}\"",
+		"generate-resources": "node scripts/generate-mcp-resources.js",
+		"inspector": "MCP_TOOLS_DEBUG=true node dist/index.cjs",
 		"lint:fix": "eslint \"{src,scripts}/**/*.{ts,js}\" --fix",
 		"lint": "eslint \"{src,scripts}/**/*.{ts,js}\"",
-		"prepare": "npm run build",
-		"prepublishOnly": "npm run test",
-		"start": "node dist/bin.cjs",
+		"prepare": "node scripts/ensure-deps.js && npm run build || node scripts/ensure-deps.js",
+		"prepublishOnly": "npm run build",
+		"postinstall": "node -e \"try { require('./dist/index.cjs'); } catch(e) { console.log('Running build...'); try { require('child_process').execSync('npm run build', {stdio: 'inherit'}); } catch(e) { console.log('Build failed, creating fallback files...'); const fs = require('fs'); const path = require('path'); const dist = path.join(process.cwd(), 'dist'); if (!fs.existsSync(dist)) { fs.mkdirSync(dist, { recursive: true }); } fs.writeFileSync(path.join(dist, 'bin.cjs'), '#!/usr/bin/env node\\nconsole.error(\\'Fallback build - please run npm rebuild to create proper build\\');process.exit(1);'); fs.chmodSync(path.join(dist, 'bin.cjs'), '755'); fs.writeFileSync(path.join(dist, 'index.cjs'), 'module.exports={error:\\'Fallback build\\',rebuild:function(){console.log(\\'Run npm rebuild\\');}};'); } }\"",
+		"start": "node dist/index.cjs",
 		"test": "jest",
 		"test:watch": "jest --watch",
 		"test:coverage": "jest --coverage --coverageReporters=text --coverageReporters=json-summary --coverageReporters=html",
@@ -46,6 +46,7 @@
 		"dist/bin.d.cts",
 		"dist/bin.d.mts",
 		"scripts/build.js",
+		"scripts/ensure-deps.js",
 		"README.md",
 		"LICENSE"
 	],

@@ -17,7 +17,9 @@ const rootDir = path.resolve(__dirname, '..');
 // Check if tsup is installed locally
 const nodeModulesPath = path.join(rootDir, 'node_modules', '.bin', 'tsup');
 const hasTsupLocal = fs.existsSync(nodeModulesPath);
-const tsupCmd = hasTsupLocal ? nodeModulesPath : 'npx tsup';
+const tsupCmd = hasTsupLocal
+	? `"${process.execPath}" "${nodeModulesPath}"`
+	: `"${process.execPath}" "${path.join(rootDir, 'node_modules', 'tsup', 'dist', 'cli.js')}"`;
 
 // Check if dependencies are available
 const hasTypeScript = fs.existsSync(path.join(rootDir, 'node_modules', 'typescript'));
