@@ -153,26 +153,6 @@ process.exit(1);`;
 				process.exit(1);
 			}
 		}
-	} else if (error.message.includes('dts build') && tsupOptions.includes('--dts')) {
-		console.log('Trying again without TypeScript declarations...');
-
-		// Remove the --dts option
-		const indexOfDts = tsupOptions.indexOf('--dts');
-		if (indexOfDts !== -1) {
-			tsupOptions.splice(indexOfDts, 1);
-		}
-
-		try {
-			execSync(`${tsupCmd} ${tsupOptions.join(' ')}`, {
-				cwd: rootDir,
-				env: { ...process.env, NODE_ENV: 'production' },
-				stdio: 'inherit',
-			});
-			console.log('Build completed successfully without TypeScript declarations');
-		} catch (retryError) {
-			console.error('Build failed again:', retryError.message);
-			process.exit(1);
-		}
 	} else {
 		process.exit(1);
 	}
