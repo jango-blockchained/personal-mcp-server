@@ -9,6 +9,52 @@ A boilerplate Model Context Protocol (MCP) server implementation using TypeScrip
 - **IP Address Lookup**: Get details about any IP address or your current device's IP.
 - **Automated Release Management**: GitHub Actions workflow for continuous integration, testing, and publishing to GitHub Packages.
 
+## Installation
+
+### Global Installation
+
+You can install this package globally to use as a CLI tool:
+
+```bash
+npm install -g @aashari/boilerplate-mcp-server
+```
+
+After global installation, you can run the CLI commands directly:
+
+```bash
+# Get help
+boilerplate-mcp-server --help
+
+# Get current IP details
+boilerplate-mcp-server get-ip-details
+
+# Get details for a specific IP
+boilerplate-mcp-server get-ip-details 8.8.8.8
+```
+
+### Local Installation
+
+For development or local use, clone the repository and install dependencies:
+
+```bash
+git clone https://github.com/aashari/boilerplate-mcp-server.git
+cd boilerplate-mcp-server
+npm install
+```
+
+Then run the development server:
+
+```bash
+npm run dev
+```
+
+Or build and start:
+
+```bash
+npm run build
+npm start
+```
+
 ## Configuration Options for End Users
 
 Before setting up with Claude Desktop or Cursor AI, you can configure the server. There are two recommended options for end users:
@@ -224,7 +270,7 @@ The package can also be used as a command-line tool for human interaction:
   query: 118.99.106.135
   ```
 
-- **Get details for a specific IP address**:
+  - **Get details for a specific IP address**:
 
   ```bash
   npx -y aashari/boilerplate-mcp-server get-ip-details 8.8.8.8

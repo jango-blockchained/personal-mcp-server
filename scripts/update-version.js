@@ -63,6 +63,19 @@ try {
 	process.exit(1);
 }
 
+// Update src/bin.ts
+const binTsPath = path.join(rootDir, 'src', 'bin.ts');
+try {
+	if (fs.existsSync(binTsPath)) {
+		let binTsContent = fs.readFileSync(binTsPath, 'utf8');
+		// Nothing to update in bin.ts since it uses index.ts for server initialization
+		console.log(`Checked src/bin.ts - no version references need updating`);
+	}
+} catch (error) {
+	console.error(`Error checking src/bin.ts: ${error.message}`);
+	// Don't exit, just log the error
+}
+
 // Update src/cli/index.ts
 const cliIndexTsPath = path.join(rootDir, 'src', 'cli', 'index.ts');
 try {

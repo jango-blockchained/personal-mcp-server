@@ -1,6 +1,6 @@
 {
 	"name": "@aashari/boilerplate-mcp-server",
-	"version": "1.10.0",
+	"version": "1.11.0",
 	"description": "A boilerplate Model Context Protocol (MCP) server implementation using TypeScript",
 	"type": "module",
 	"main": "dist/index.cjs",
@@ -15,13 +15,13 @@
 		}
 	},
 	"bin": {
-		"boilerplate-mcp-server": "dist/index.cjs"
+		"boilerplate-mcp-server": "dist/bin.cjs"
 	},
 	"scripts": {
-		"build": "tsup src/index.ts --format cjs,esm --clean",
+		"build": "NODE_ENV=production tsup --config tsup.config.ts",
 		"check": "npm run format:check && npm run lint",
 		"clean": "rimraf dist",
-		"dev": "NODE_OPTIONS=\"--no-warnings --loader ts-node/esm\" node src/index.ts",
+		"dev": "NODE_OPTIONS=\"--no-warnings --loader ts-node/esm\" node src/bin.ts",
 		"fix": "npm run format && npm run lint:fix",
 		"format:check": "prettier --check \"{src,scripts}/**/*.{ts,js}\"",
 		"format": "prettier --write \"{src,scripts}/**/*.{ts,js}\"",
@@ -30,14 +30,21 @@
 		"lint": "eslint \"{src,scripts}/**/*.{ts,js}\"",
 		"prepare": "npm run build",
 		"prepublishOnly": "npm run test",
-		"start": "npm run build && node dist/index.cjs",
+		"start": "node dist/bin.cjs",
 		"test": "jest",
 		"test:watch": "jest --watch",
 		"test:coverage": "jest --coverage --coverageReporters=text --coverageReporters=json-summary --coverageReporters=html",
 		"update-version": "node scripts/update-version.js"
 	},
 	"files": [
-		"dist/**/*.{cjs,mjs,d.cts,d.mts,js.map}",
+		"dist/index.cjs",
+		"dist/index.mjs",
+		"dist/index.d.cts",
+		"dist/index.d.mts",
+		"dist/bin.cjs",
+		"dist/bin.mjs",
+		"dist/bin.d.cts",
+		"dist/bin.d.mts",
 		"README.md",
 		"LICENSE"
 	],
@@ -87,9 +94,7 @@
 	"dependencies": {
 		"@modelcontextprotocol/sdk": "1.7.0",
 		"commander": "13.1.0",
-		"dotenv": "16.4.7",
-		"zod": "3.24.2",
-		"tsup": "8.4.0"
+		"zod": "3.24.2"
 	},
 	"devDependencies": {
 		"@commander-js/extra-typings": "13.1.0",
@@ -97,6 +102,7 @@
 		"@modelcontextprotocol/inspector": "0.6.0",
 		"@types/jest": "29.5.14",
 		"@types/node": "22.13.10",
+		"dotenv": "16.4.7",
 		"eslint": "9.22.0",
 		"eslint-config-prettier": "10.1.1",
 		"eslint-plugin-prettier": "5.2.3",
@@ -105,6 +111,7 @@
 		"rimraf": "6.0.1",
 		"ts-jest": "29.2.6",
 		"ts-node": "10.9.2",
+		"tsup": "8.4.0",
 		"typescript-eslint": "8.26.1",
 		"typescript": "5.8.2"
 	}
