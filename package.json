@@ -18,7 +18,7 @@
 		"boilerplate-mcp-server": "dist/bin.cjs"
 	},
 	"scripts": {
-		"build": "NODE_ENV=production tsup --config tsup.config.ts",
+		"build": "NODE_ENV=production npx tsup --config tsup.config.ts",
 		"check": "npm run format:check && npm run lint",
 		"clean": "rimraf dist",
 		"dev": "NODE_OPTIONS=\"--no-warnings --loader ts-node/esm\" node src/bin.ts",
