@@ -3,7 +3,9 @@ import { logger } from '../utils/logger.util.js';
 import { McpError, createUnexpectedError } from '../utils/error.util.js';
 
 async function get(ipAddress?: string) {
-	logger.debug(`[src/controllers/ipaddress.controller.ts@get] Getting IP address details...`);
+	logger.debug(
+		`[src/controllers/ipaddress.controller.ts@get] Getting IP address details...`,
+	);
 
 	try {
 		const ipData = await ipApiService.get(ipAddress);

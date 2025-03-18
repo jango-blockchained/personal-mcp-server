@@ -6,8 +6,13 @@ import { formatErrorForMcpTool } from '../utils/error.util.js';
 
 import ipAddressController from '../controllers/ipaddress.controller.js';
 
-async function getIpAddressDetails(args: IpAddressToolArgsType, _extra: RequestHandlerExtra) {
-	logger.debug(`[src/tools/ipaddress.tool.ts@getIpAddressDetails] Getting IP address details...`);
+async function getIpAddressDetails(
+	args: IpAddressToolArgsType,
+	_extra: RequestHandlerExtra,
+) {
+	logger.debug(
+		`[src/tools/ipaddress.tool.ts@getIpAddressDetails] Getting IP address details...`,
+	);
 
 	try {
 		const message = await ipAddressController.get(args.ipAddress);

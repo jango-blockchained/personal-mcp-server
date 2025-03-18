@@ -1,10 +1,16 @@
 {
-  "semi": true,
-  "tabWidth": 4,
-  "useTabs": true,
-  "printWidth": 100,
   "singleQuote": true,
+  "semi": true,
+  "useTabs": true,
+  "tabWidth": 4,
+  "printWidth": 80,
   "trailingComma": "all",
-  "bracketSpacing": true,
-  "arrowParens": "avoid"
+  "overrides": [
+    {
+      "files": ["jest.config.js", "*.config.js", ".*.js"],
+      "options": {
+        "semi": false
+      }
+    }
+  ]
 } 

@@ -31,7 +31,9 @@ describe('IP Address Controller', () => {
 			const invalidIp = 'invalid-ip';
 
 			// Call the function with the real API and expect it to throw an McpError
-			await expect(ipAddressController.get(invalidIp)).rejects.toThrow(McpError);
+			await expect(ipAddressController.get(invalidIp)).rejects.toThrow(
+				McpError,
+			);
 
 			// Try to get the error to verify its properties
 			try {

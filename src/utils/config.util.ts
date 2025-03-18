@@ -27,11 +27,15 @@ class ConfigLoader {
 	 */
 	load(): void {
 		if (this.configLoaded) {
-			logger.debug('[src/utils/config.util.ts@load] Configuration already loaded, skipping');
+			logger.debug(
+				'[src/utils/config.util.ts@load] Configuration already loaded, skipping',
+			);
 			return;
 		}
 
-		logger.debug('[src/utils/config.util.ts@load] Loading configuration...');
+		logger.debug(
+			'[src/utils/config.util.ts@load] Loading configuration...',
+		);
 
 		// Priority 3: Load from global config file
 		this.loadFromGlobalConfig();
@@ -43,7 +47,9 @@ class ConfigLoader {
 		// No need to do anything as it already has highest priority
 
 		this.configLoaded = true;
-		logger.debug('[src/utils/config.util.ts@load] Configuration loaded successfully');
+		logger.debug(
+			'[src/utils/config.util.ts@load] Configuration loaded successfully',
+		);
 	}
 
 	/**
@@ -87,7 +93,10 @@ class ConfigLoader {
 			const configContent = fs.readFileSync(globalConfigPath, 'utf8');
 			const config = JSON.parse(configContent);
 
-			if (!config[this.packageName] || !config[this.packageName].environments) {
+			if (
+				!config[this.packageName] ||
+				!config[this.packageName].environments
+			) {
 				logger.debug(
 					`[src/utils/config.util.ts@loadFromGlobalConfig] No configuration found for ${this.packageName}`,
 				);

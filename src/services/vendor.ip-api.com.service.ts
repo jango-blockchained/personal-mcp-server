@@ -1,7 +1,11 @@
 import { logger } from '../utils/logger.util.js';
 import { config } from '../utils/config.util.js';
 import { IPDetail } from './vendor.ip-api.com.type.js';
-import { createApiError, createUnexpectedError, McpError } from '../utils/error.util.js';
+import {
+	createApiError,
+	createUnexpectedError,
+	McpError,
+} from '../utils/error.util.js';
 
 const ENDPOINT = 'http://ip-api.com/json';
 
@@ -45,11 +49,18 @@ async function get(ipAddress?: string): Promise<IPDetail> {
 
 		// Handle fetch errors
 		if (error instanceof TypeError) {
-			throw createApiError('Network error while contacting IP API', undefined, error);
+			throw createApiError(
+				'Network error while contacting IP API',
+				undefined,
+				error,
+			);
 		}
 
 		// Handle unexpected errors
-		throw createUnexpectedError('Unexpected error while fetching IP data', error);
+		throw createUnexpectedError(
+			'Unexpected error while fetching IP data',
+			error,
+		);
 	}
 }
 

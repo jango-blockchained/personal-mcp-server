@@ -18,7 +18,12 @@ export class McpError extends Error {
 	statusCode?: number;
 	originalError?: unknown;
 
-	constructor(message: string, type: ErrorType, statusCode?: number, originalError?: unknown) {
+	constructor(
+		message: string,
+		type: ErrorType,
+		statusCode?: number,
+		originalError?: unknown,
+	) {
 		super(message);
 		this.name = 'McpError';
 		this.type = type;
@@ -53,7 +58,12 @@ export function createApiError(
 	statusCode?: number,
 	originalError?: unknown,
 ): McpError {
-	return new McpError(message, ErrorType.API_ERROR, statusCode, originalError);
+	return new McpError(
+		message,
+		ErrorType.API_ERROR,
+		statusCode,
+		originalError,
+	);
 }
 
 /**
@@ -63,7 +73,12 @@ export function createUnexpectedError(
 	message: string = 'An unexpected error occurred',
 	originalError?: unknown,
 ): McpError {
-	return new McpError(message, ErrorType.UNEXPECTED_ERROR, undefined, originalError);
+	return new McpError(
+		message,
+		ErrorType.UNEXPECTED_ERROR,
+		undefined,
+		originalError,
+	);
 }
 
 /**
@@ -110,7 +125,12 @@ export function formatErrorForMcpResource(
 	error: unknown,
 	uri: string,
 ): {
-	contents: Array<{ uri: string; text: string; mimeType: string; description?: string }>;
+	contents: Array<{
+		uri: string;
+		text: string;
+		mimeType: string;
+		description?: string;
+	}>;
 } {
 	const mcpError = ensureMcpError(error);
 	logger.error(
@@ -135,7 +155,10 @@ export function formatErrorForMcpResource(
  */
 export function handleCliError(error: unknown): never {
 	const mcpError = ensureMcpError(error);
-	logger.error(`[src/utils/error.util.ts@handleCliError] ${mcpError.type} error`, mcpError);
+	logger.error(
+		`[src/utils/error.util.ts@handleCliError] ${mcpError.type} error`,
+		mcpError,
+	);
 	console.error(`Error: ${mcpError.message}`);
 	process.exit(1);
 }

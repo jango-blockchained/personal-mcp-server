@@ -27,7 +27,8 @@ function register(server: McpServer) {
 							uri: 'ip://current',
 							text: resourceContent.content,
 							mimeType: 'text/plain',
-							description: 'Details about your current IP address',
+							description:
+								'Details about your current IP address',
 						},
 					],
 				};

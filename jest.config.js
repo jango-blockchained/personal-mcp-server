@@ -13,6 +13,13 @@ export default {
 			},
 		],
 	},
-	coveragePathIgnorePatterns: ['/node_modules/', '/src/utils/logger.util.ts'],
+	testMatch: ['**/src/**/*.test.ts'],
+	collectCoverageFrom: ['src/**/*.ts', '!src/**/*.test.ts', '!src/**/*.spec.ts'],
+	coveragePathIgnorePatterns: [
+		'/node_modules/',
+		'/dist/',
+		'/coverage/',
+		'/src/utils/logger.util.ts',
+	],
 	coverageReporters: ['text', 'lcov', 'json-summary'],
-};
+}

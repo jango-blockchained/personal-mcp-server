@@ -30,7 +30,7 @@ export async function startServer(mode: 'stdio' | 'sse' = 'stdio') {
 
 	serverInstance = new McpServer({
 		name: '@aashari/boilerplate-mcp-server',
-		version: '1.17.2',
+		version: '1.17.3',
 	});
 
 	if (mode === 'stdio') {
@@ -50,7 +50,7 @@ export async function startServer(mode: 'stdio' | 'sse' = 'stdio') {
 	// register resources
 	ipLookupResources.register(serverInstance);
 
-	return serverInstance.connect(transportInstance).catch(err => {
+	return serverInstance.connect(transportInstance).catch((err) => {
 		logger.error(`[src/index.ts] Failed to start server`, err);
 		process.exit(1);
 	});

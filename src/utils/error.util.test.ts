@@ -30,7 +30,9 @@ describe('Error Utility', () => {
 
 			expect(error).toBeInstanceOf(McpError);
 			expect(error.type).toBe(ErrorType.AUTH_MISSING);
-			expect(error.message).toBe('Authentication credentials are missing');
+			expect(error.message).toBe(
+				'Authentication credentials are missing',
+			);
 		});
 
 		it('should create auth invalid error', () => {
@@ -97,7 +99,10 @@ describe('Error Utility', () => {
 			expect(response).toHaveProperty('content');
 			expect(response.content).toHaveLength(1);
 			expect(response.content[0]).toHaveProperty('type', 'text');
-			expect(response.content[0]).toHaveProperty('text', 'Error: API error');
+			expect(response.content[0]).toHaveProperty(
+				'text',
+				'Error: API error',
+			);
 		});
 	});
 
@@ -109,9 +114,18 @@ describe('Error Utility', () => {
 			expect(response).toHaveProperty('contents');
 			expect(response.contents).toHaveLength(1);
 			expect(response.contents[0]).toHaveProperty('uri', 'test://uri');
-			expect(response.contents[0]).toHaveProperty('text', 'Error: API error');
-			expect(response.contents[0]).toHaveProperty('mimeType', 'text/plain');
-			expect(response.contents[0]).toHaveProperty('description', 'Error: API_ERROR');
+			expect(response.contents[0]).toHaveProperty(
+				'text',
+				'Error: API error',
+			);
+			expect(response.contents[0]).toHaveProperty(
+				'mimeType',
+				'text/plain',
+			);
+			expect(response.contents[0]).toHaveProperty(
+				'description',
+				'Error: API_ERROR',
+			);
 		});
 	});
 });

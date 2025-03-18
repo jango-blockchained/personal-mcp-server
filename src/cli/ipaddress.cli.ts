@@ -9,11 +9,15 @@ import ipAddressController from '../controllers/ipaddress.controller.js';
  * @param program The Commander program instance
  */
 function register(program: Command) {
-	logger.debug(`[src/cli/ipaddress.cli.ts@register] Registering IP address CLI commands...`);
+	logger.debug(
+		`[src/cli/ipaddress.cli.ts@register] Registering IP address CLI commands...`,
+	);
 
 	program
 		.command('get-ip-details')
-		.description('Get details about a specific IP address or the current device')
+		.description(
+			'Get details about a specific IP address or the current device',
+		)
 		.argument('[ipAddress]', 'IP address to lookup (optional)')
 		.action(async (ipAddress?: string) => {
 			try {

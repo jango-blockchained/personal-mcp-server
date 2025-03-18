@@ -8,7 +8,11 @@ function getTimestamp(): string {
 }
 
 class Logger {
-	_log(level: 'info' | 'warn' | 'error' | 'debug', message: string, ...args: unknown[]) {
+	_log(
+		level: 'info' | 'warn' | 'error' | 'debug',
+		message: string,
+		...args: unknown[]
+	) {
 		// Skip debug messages if DEBUG is not set to true
 		if (level === 'debug' && process.env.DEBUG !== 'true') {
 			return;
@@ -18,7 +22,7 @@ class Logger {
 		const prefix = `${timestamp} [${level.toUpperCase()}]`;
 		let logMessage = `${prefix} ${message}`;
 		if (args.length > 0) {
-			logMessage += ` ${args.map(arg => JSON.stringify(arg)).join(' ')}`;
+			logMessage += ` ${args.map((arg) => JSON.stringify(arg)).join(' ')}`;
 		}
 		if (process.env.NODE_ENV === 'test') {
 			console[level](logMessage);
